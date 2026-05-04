@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import pinwheelSvg from "../../../public/assets/bangbulb-pinwheel.svg";
 
 interface LoaderProps {
   onDone?: () => void;
@@ -44,7 +45,7 @@ export default function Loader({ onDone }: LoaderProps) {
       <div className="loader__center">
         <div className="loader__pinwheel">
           <Image
-            src="/assets/bangbulb-pinwheel.svg"
+            src={pinwheelSvg}
             alt=""
             width={240}
             height={240}

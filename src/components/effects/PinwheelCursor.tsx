@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import pinwheelSvg from "../../../public/assets/bangbulb-pinwheel.svg";
 
 interface PinwheelCursorProps {
   enabled: boolean;
@@ -77,7 +78,7 @@ export default function PinwheelCursor({ enabled }: PinwheelCursorProps) {
     <div className="pcursor" ref={wrapRef}>
       <div className="pcursor__pin" ref={pinRef}>
         <Image
-          src="/assets/bangbulb-pinwheel.svg"
+          src={pinwheelSvg}
           alt=""
           width={40}
           height={40}

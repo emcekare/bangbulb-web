@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import pinwheelSvg from "../../public/assets/bangbulb-pinwheel.svg";
 
 interface HeroProps {
   titleA?: string;
@@ -90,7 +91,7 @@ export default function Hero({
           <div className="hero__logo" ref={logoRef}>
             <div className="hero__logo-rays"></div>
             <Image
-              src="/assets/bangbulb-pinwheel.svg"
+              src={pinwheelSvg}
               alt="BangBulb"
               width={260}
               height={260}

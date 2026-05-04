@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import pinwheelSvg from "../../public/assets/bangbulb-pinwheel.svg";
 
 function useMagnetic(strength = 0.35) {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -31,7 +32,7 @@ export default function Nav() {
       <a href="#top" className="nav__brand" data-cursor="ana sayfa">
         <span className="nav__brand-mark nav__brand-mark--lg">
           <Image
-            src="/assets/bangbulb-pinwheel.svg"
+            src={pinwheelSvg}
             alt=""
             width={32}
             height={32}
