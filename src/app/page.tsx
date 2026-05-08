@@ -17,9 +17,11 @@ import Clients from "@/components/sections/Clients";
 import Blog from "@/components/sections/Blog";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
+import ContactModal from "@/components/ContactModal";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   useReveal();
 
   return (
@@ -27,7 +29,7 @@ export default function Home() {
       {!loaded && <Loader onDone={() => setLoaded(true)} />}
       <ScrollBgMorph />
       <PinwheelCursor enabled={true} />
-      <Nav />
+      <Nav onContactClick={() => setContactOpen(true)} />
       <Hero />
       <Marquee />
       <Services />
@@ -39,6 +41,7 @@ export default function Home() {
       <Blog />
       <Contact />
       <Footer />
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </>
   );
 }
