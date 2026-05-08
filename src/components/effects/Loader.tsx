@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import pinwheelSvg from "../../../public/assets/bangbulb-pinwheel.svg";
+import wordmarkSvg from "../../../public/assets/bangbulb-wordmark.svg";
 
 interface LoaderProps {
   onDone?: () => void;
@@ -10,14 +11,32 @@ interface LoaderProps {
 export default function Loader({ onDone }: LoaderProps) {
   const [n, setN] = useState(0);
   const [phase, setPhase] = useState<"loading" | "exiting" | "done">("loading");
-  const startRef = useRef<number | null>(null);
+
+  const onDoneRef = useRef(onDone);
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
 
   useEffect(() => {
     document.documentElement.classList.add("is-loading");
     const start = performance.now();
-    startRef.current = start;
     const dur = 2200;
-    let raf: number;
+    let raf = 0;
+    let exitTimer: number | undefined;
+    let failsafe: number | undefined;
+    let finished = false;
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      setPhase("exiting");
+      exitTimer = window.setTimeout(() => {
+        setPhase("done");
+        document.documentElement.classList.remove("is-loading");
+        onDoneRef.current?.();
+      }, 1100);
+    };
+
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / dur);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -25,31 +44,49 @@ export default function Loader({ onDone }: LoaderProps) {
       if (p < 1) {
         raf = requestAnimationFrame(tick);
       } else {
-        setPhase("exiting");
-        setTimeout(() => {
-          setPhase("done");
-          document.documentElement.classList.remove("is-loading");
-          onDone?.();
-        }, 1100);
+        finish();
       }
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [onDone]);
+
+    failsafe = window.setTimeout(() => {
+      if (!finished) {
+        setN(100);
+        finish();
+      }
+    }, 5000);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      if (exitTimer !== undefined) clearTimeout(exitTimer);
+      if (failsafe !== undefined) clearTimeout(failsafe);
+    };
+  }, []);
 
   if (phase === "done") return null;
+
+  // Reveal the wordmark from left to right as the counter ticks up.
+  // Uses inset() clip-path: at n=0 the right side is fully clipped (100%),
+  // at n=100 nothing is clipped — the full logo is visible.
+  const wordmarkClip = `inset(0 ${100 - n}% 0 0)`;
 
   return (
     <div className={"loader loader--" + phase}>
       <div className="loader__bg"></div>
       <div className="loader__center">
-        <div className="loader__pinwheel">
-          <Image
-            src={pinwheelSvg}
-            alt=""
-            width={240}
-            height={240}
-          />
+        <div className="loader__wordmark-stage">
+          {/* Faint placeholder — gives the eye an anchor at 0% */}
+          <div className="loader__wordmark loader__wordmark--ghost">
+            <Image src={wordmarkSvg} alt="" width={520} height={350} />
+          </div>
+          {/* Filled wordmark, revealed left→right with clip-path */}
+          <div className="loader__wordmark loader__wordmark--fill" style={{ clipPath: wordmarkClip }}>
+            <Image src={wordmarkSvg} alt="BangBulb" width={520} height={350} priority />
+          </div>
+          {/* Small spinning pinwheel as a kinetic accent */}
+          <div className="loader__pinwheel-mini">
+            <Image src={pinwheelSvg} alt="" width={64} height={64} />
+          </div>
         </div>
       </div>
       <div className="loader__top">

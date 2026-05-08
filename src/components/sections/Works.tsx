@@ -16,17 +16,38 @@ export default function Works() {
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!pinRef.current || !trackRef.current) return;
-    let raf: number;
+    const pin = pinRef.current;
+    const track = trackRef.current;
+    if (!pin || !track) return;
+
+    // Cache layout-derived values; only recompute on resize / fonts loaded.
+    // Reading scrollWidth every frame caused layout thrash, and the +80
+    // buffer the prototype used left a 100+ px gap to the right of the
+    // last card on desktop.
+    let trackW = 0;
+    let total = 0;
+
+    const recalc = () => {
+      // Distance the track must shift so its right edge meets the viewport's
+      // right edge (track has `padding: 0 var(--pad)`, so the page's edge
+      // padding is preserved automatically — no extra buffer needed).
+      trackW = Math.max(0, track.scrollWidth - window.innerWidth);
+      total = Math.max(0, pin.offsetHeight - window.innerHeight);
+    };
+
+    recalc();
+    window.addEventListener("resize", recalc);
+    // Card widths can shift once webfonts load — recompute when ready.
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(recalc);
+    }
+
+    let raf = 0;
     const tick = () => {
-      const pin = pinRef.current;
-      const track = trackRef.current;
-      if (pin && track) {
+      if (total > 0 && trackW > 0) {
         const r = pin.getBoundingClientRect();
-        const total = pin.offsetHeight - window.innerHeight;
         const passed = -r.top;
         const p = Math.max(0, Math.min(1, passed / total));
-        const trackW = track.scrollWidth - window.innerWidth + 80;
         track.style.transform = `translateX(${-p * trackW}px)`;
         const fill = document.getElementById("works-progress-fill");
         if (fill) fill.style.transform = `scaleX(${p})`;
@@ -34,7 +55,11 @@ export default function Works() {
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", recalc);
+    };
   }, []);
 
   return (

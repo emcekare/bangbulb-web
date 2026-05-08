@@ -13,7 +13,12 @@ export default function PinwheelCursor({ enabled }: PinwheelCursorProps) {
   const pinRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!enabled) {
+    // Skip on touch / no-hover devices: there's no cursor to replace, and
+    // leaving body.no-cursor on hides any inherited cursor unnecessarily.
+    const isCoarse =
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(hover: none)").matches;
+    if (!enabled || isCoarse) {
       document.body.classList.remove("no-cursor");
       return;
     }
