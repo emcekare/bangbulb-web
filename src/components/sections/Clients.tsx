@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
+import { getAssetPath } from "@/lib/asset";
 
 export const mainClients = [
   { name: "A101", logo: "a-101.svg" },
@@ -57,7 +58,7 @@ export default function Clients({ onShowAll }: ClientsProps) {
               <span className="client__name">{c.name}</span>
               <div className="client__logo-wrapper">
                 <Image 
-                  src={`/assets/clients/${c.logo}`} 
+                  src={getAssetPath(`/assets/clients/${c.logo}`)} 
                   alt={c.name}
                   fill
                   style={{ objectFit: 'contain', padding: '12px' }}

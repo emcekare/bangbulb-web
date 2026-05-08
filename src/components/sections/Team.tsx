@@ -18,6 +18,7 @@ const initials = (n: string) =>
     .join("");
 
 import Image from "next/image";
+import { getAssetPath } from "@/lib/asset";
 
 export default function Team() {
   return (
@@ -45,7 +46,7 @@ export default function Team() {
               <div className="member__avatar" data-init={!m.image ? initials(m.name) : ""}>
                 {m.image && (
                   <Image 
-                    src={`/assets/team/${m.image}`}
+                    src={getAssetPath(`/assets/team/${m.image}`)}
                     alt={m.name}
                     fill
                     style={{ objectFit: "cover" }}

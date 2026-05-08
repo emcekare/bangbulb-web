@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { getAssetPath } from "@/lib/asset";
 
 const works = [
   { id: "a", title: "Quasar Lansman", cat: "KAMPANYA / FILM", year: "2025", layout: "a" },
@@ -99,7 +100,7 @@ export default function Works() {
                   {w.video && (
                     <>
                       <video
-                        src={w.video}
+                        src={getAssetPath(w.video)}
                         autoPlay
                         loop
                         muted

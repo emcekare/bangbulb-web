@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import { allClients } from "./sections/Clients";
+import { getAssetPath } from "@/lib/asset";
 
 interface ClientsModalProps {
   open: boolean;
@@ -37,7 +38,7 @@ export default function ClientsModal({ open, onClose }: ClientsModalProps) {
             <div className="client-modal__item" key={i}>
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 <Image 
-                  src={`/assets/clients/${c.logo}`} 
+                  src={getAssetPath(`/assets/clients/${c.logo}`)} 
                   alt={c.name}
                   fill
                   style={{ objectFit: 'contain', padding: '8px' }}
