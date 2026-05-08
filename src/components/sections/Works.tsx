@@ -17,6 +17,16 @@ export default function Works() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [modalLink, setModalLink] = useState<string | null>(null);
 
+  // ESC tuşu ile modalı kapatma
+  useEffect(() => {
+    if (!modalLink) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalLink(null);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalLink]);
+
   useEffect(() => {
     const pin = pinRef.current;
     const track = trackRef.current;
@@ -173,11 +183,6 @@ export default function Works() {
             <div style={{
               height: '40px', backgroundColor: '#2a2a2a', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px'
             }}>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <div onClick={() => setModalLink(null)} style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ff5f56', cursor: 'pointer' }} />
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ffbd2e' }} />
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#27c93f' }} />
-              </div>
               <div style={{
                 flex: 1, backgroundColor: '#1a1a1a', height: '24px', borderRadius: '12px',
                 color: '#888', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -185,7 +190,20 @@ export default function Works() {
               }}>
                 {modalLink}
               </div>
-              <div style={{ width: '52px' }}></div>
+              <button
+                onClick={() => setModalLink(null)}
+                aria-label="Kapat"
+                style={{
+                  background: 'none', border: 'none', color: '#aaa', fontSize: '20px',
+                  cursor: 'pointer', width: '32px', height: '32px', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', borderRadius: '6px',
+                  transition: 'background 0.2s, color 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#aaa'; }}
+              >
+                ×
+              </button>
             </div>
             <div style={{ flex: 1, backgroundColor: '#fff' }}>
               <iframe
