@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const works = [
   { id: "a", title: "Quasar Lansman", cat: "KAMPANYA / FILM", year: "2025", layout: "a" },
   { id: "b", title: "Offis Mekan", cat: "SOSYAL MEDYA", year: "2025", layout: "b" },
-  { id: "c", title: "Beyaz Bahçe", cat: "AMBALAJ", year: "2024", layout: "c" },
+  { id: "c", title: "La Liberté", cat: "AMBALAJ", year: "2024", layout: "c", link: "https://www.behance.net/gallery/145736391/LaLibert-Coffee-Packaging-design", video: "/assets/videos/la-liberte.mp4" },
   { id: "d", title: "Saatçi Co.", cat: "KIMLIK", year: "2024", layout: "d" },
   { id: "e", title: "Lale Sokağı", cat: "TVC", year: "2024", layout: "e" },
   { id: "f", title: "Mira Skincare", cat: "META PERFORMANCE", year: "2025", layout: "f" },
@@ -14,6 +14,7 @@ const works = [
 export default function Works() {
   const pinRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [modalLink, setModalLink] = useState<string | null>(null);
 
   useEffect(() => {
     const pin = pinRef.current;
@@ -84,13 +85,32 @@ export default function Works() {
         <div className="works__viewport">
           <div className="works__track" ref={trackRef}>
             {works.map((w, i) => (
-              <article key={w.id} className="hwork" data-cursor="vakayı aç">
+              <article
+                key={w.id}
+                className="hwork"
+                data-cursor="İNCELE"
+                onClick={() => w.link && setModalLink(w.link)}
+                style={w.link ? { cursor: 'pointer' } : undefined}
+              >
                 <div className="hwork__index mono">
                   / {String(i + 1).padStart(2, "0")} — {String(works.length).padStart(2, "0")}
                 </div>
-                <div className={"hwork__media work__bg-" + w.layout}>
-                  <div className="hwork__media-label">
-                    {w.title.toUpperCase()} / {w.cat}
+                <div className={"hwork__media work__bg-" + w.layout} style={{ position: 'relative', overflow: 'hidden' }}>
+                  {w.video && (
+                    <>
+                      <video
+                        src={w.video}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 0 }}></div>
+                    </>
+                  )}
+                  <div className="hwork__media-label" style={{ zIndex: 1, color: w.video ? '#fff' : undefined }}>
+                    {w.title.toUpperCase()} / {w.cat} / {w.year}
                   </div>
                 </div>
                 <div className="hwork__meta">
@@ -134,6 +154,49 @@ export default function Works() {
           <span className="mono">scroll ↓ horizontal</span>
         </div>
       </div>
+
+      {modalLink && (
+        <div
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.8)', padding: '2rem'
+          }}
+        >
+          <div style={{ position: 'absolute', inset: 0 }} onClick={() => setModalLink(null)} />
+          <div style={{
+            position: 'relative', width: '100%', maxWidth: '1200px', height: '85vh',
+            backgroundColor: '#1a1a1a', borderRadius: '12px', overflow: 'hidden',
+            display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
+          }}>
+            <div style={{
+              height: '40px', backgroundColor: '#2a2a2a', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px'
+            }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <div onClick={() => setModalLink(null)} style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ff5f56', cursor: 'pointer' }} />
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ffbd2e' }} />
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#27c93f' }} />
+              </div>
+              <div style={{
+                flex: 1, backgroundColor: '#1a1a1a', height: '24px', borderRadius: '12px',
+                color: '#888', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'monospace'
+              }}>
+                {modalLink}
+              </div>
+              <div style={{ width: '52px' }}></div>
+            </div>
+            <div style={{ flex: 1, backgroundColor: '#fff' }}>
+              <iframe
+                src={modalLink.includes('behance.net/gallery/') ? `https://www.behance.net/embed/project/${modalLink.split('/')[4]}?tracking_source=project_controls` : modalLink}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                allow="fullscreen"
+                scrolling="yes"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

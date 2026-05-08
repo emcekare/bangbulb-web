@@ -18,10 +18,12 @@ import Blog from "@/components/sections/Blog";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
 import ContactModal from "@/components/ContactModal";
+import ClientsModal from "@/components/ClientsModal";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [clientsModalOpen, setClientsModalOpen] = useState(false);
   useReveal();
 
   return (
@@ -37,11 +39,12 @@ export default function Home() {
       <Works />
       <Manifesto />
       <Team />
-      <Clients />
+      <Clients onShowAll={() => setClientsModalOpen(true)} />
       <Blog />
       <Contact />
       <Footer />
       <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+      <ClientsModal open={clientsModalOpen} onClose={() => setClientsModalOpen(false)} />
     </>
   );
 }

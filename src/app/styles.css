@@ -925,6 +925,16 @@ button {
   font-style: italic;
   font-size: 56px;
   color: var(--sage-2);
+  z-index: 1;
+}
+.member__photo {
+  z-index: 2;
+  filter: grayscale(100%) contrast(1.1);
+  transition: filter 0.4s var(--easing), transform 0.4s var(--easing);
+}
+.member:hover .member__photo {
+  filter: grayscale(0%) contrast(1);
+  transform: scale(1.05);
 }
 .member:hover .member__avatar { background: var(--accent); }
 .member:hover .member__avatar::before { color: #0c1816; }
@@ -983,26 +993,39 @@ button {
   position: relative;
   overflow: hidden;
   transition: background 0.4s var(--easing), color 0.4s var(--easing);
+  cursor: pointer;
 }
 .client:hover {
-  background: var(--ink);
-  color: var(--accent);
+  background: var(--cream);
 }
-.client__hover {
+.client__name {
+  transition: opacity 0.4s var(--easing), transform 0.4s var(--easing);
+  pointer-events: none;
+}
+.client:hover .client__name {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.client__logo-wrapper {
   position: absolute;
   inset: 0;
-  background: var(--accent);
-  color: #0c1816;
   display: grid;
   place-items: center;
-  transform: translateY(100%);
-  transition: transform 0.5s var(--easing);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.4s var(--easing), transform 0.4s var(--easing-spring);
+  pointer-events: none;
 }
-.client:hover .client__hover { transform: translateY(0); }
+.client:hover .client__logo-wrapper {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.clients__action {
+  display: flex;
+  justify-content: center;
+  margin-top: 56px;
+}
 
 @media (max-width: 900px) {
   .clients__grid { grid-template-columns: repeat(3, 1fr); }

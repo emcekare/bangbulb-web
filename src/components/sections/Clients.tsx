@@ -1,19 +1,41 @@
-const clients = [
-  "Quasar İstanbul",
-  "Offis Mekan",
-  "Beyaz Bahçe",
-  "Saatçi Co.",
-  "Lale Sokağı",
-  "Mira",
-  "Kahve & Co.",
-  "Bir Studio",
-  "Nokta Press",
-  "Form Lab",
-  "Atölye 41",
-  "İmge Yayın",
+import { useState } from "react";
+import Image from "next/image";
+
+export const mainClients = [
+  { name: "A101", logo: "a-101.svg" },
+  { name: "TurkNet", logo: "turknet.svg" },
+  { name: "Gelik", logo: "gelik.svg" },
+  { name: "Filizler", logo: "filizler.svg" },
+  { name: "Helen Doron", logo: "helen-doron.svg" },
+  { name: "Kumanya", logo: "kumanya.svg" },
+  { name: "Rags", logo: "rags.svg" },
+  { name: "Zavinna", logo: "zavinna.svg" },
+  { name: "Souffle", logo: "souffle.svg" },
+  { name: "Alisya", logo: "alisya.svg" },
+  { name: "New Face", logo: "new-face.svg" },
+  { name: "Birey Koleji", logo: "birey.svg" },
 ];
 
-export default function Clients() {
+export const allClients = [
+  ...mainClients,
+  { name: "Esen Bahçe", logo: "esen-bahce.svg" },
+  { name: "Estetech", logo: "estetech.svg" },
+  { name: "Fistalora", logo: "fistalora.svg" },
+  { name: "Golden Plus", logo: "golden-plus.svg" },
+  { name: "Hedef Akademi", logo: "hedef-akademi.svg" },
+  { name: "Hemdem", logo: "hemdem.svg" },
+  { name: "Kalyoncuoğlu", logo: "kalyoncuoglu.svg" },
+  { name: "La Liberte", logo: "la-liberte.svg" },
+  { name: "Lumiere", logo: "lumiere.svg" },
+  { name: "Reborn", logo: "reborn.svg" },
+  { name: "YL", logo: "yl.svg" },
+];
+
+interface ClientsProps {
+  onShowAll: () => void;
+}
+
+export default function Clients({ onShowAll }: ClientsProps) {
   return (
     <section className="section clients" id="referanslar">
       <div className="container">
@@ -30,12 +52,26 @@ export default function Clients() {
         </div>
 
         <div className="clients__grid reveal">
-          {clients.map((c, i) => (
-            <div className="client" key={i} data-cursor="vakayı gör">
-              <span>{c}</span>
-              <div className="client__hover">↗ vakayı gör</div>
+          {mainClients.map((c, i) => (
+            <div className="client" key={i}>
+              <span className="client__name">{c.name}</span>
+              <div className="client__logo-wrapper">
+                <Image 
+                  src={`/assets/clients/${c.logo}`} 
+                  alt={c.name}
+                  fill
+                  style={{ objectFit: 'contain', padding: '12px' }}
+                />
+              </div>
             </div>
           ))}
+        </div>
+        
+        <div className="clients__action reveal">
+          <button className="nav__cta" onClick={onShowAll} style={{ background: "transparent" }}>
+            <span className="nav__cta-dot" style={{ background: "var(--cream-dim)", boxShadow: "none" }}></span>
+            Tüm Referansları Gör
+          </button>
         </div>
       </div>
     </section>
