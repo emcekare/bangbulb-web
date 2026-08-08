@@ -23,8 +23,8 @@ export default function Contact() {
             </a>
             <br />
             <span className="ital">ara:</span>{" "}
-            <a href="tel:+905523807202" data-cursor="ara">
-              0 552 380 72 02
+            <a href="tel:+905373931611" data-cursor="ara">
+              0 537 393 16 11
             </a>
           </h3>
 
@@ -44,7 +44,7 @@ export default function Contact() {
               <div className="detail__value">
                 info<span style={{ color: "var(--accent)" }}>@</span>
                 bangbulb.com
-                <br />0 537 393 16 11
+                <br />0 552 380 72 02
               </div>
             </div>
             <div className="detail">

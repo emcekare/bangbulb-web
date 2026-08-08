@@ -32,24 +32,24 @@ export default function Works() {
     const track = trackRef.current;
     if (!pin || !track) return;
 
-    // Cache layout-derived values; only recompute on resize / fonts loaded.
-    // Reading scrollWidth every frame caused layout thrash, and the +80
-    // buffer the prototype used left a 100+ px gap to the right of the
-    // last card on desktop.
+    // Layout'tan türeyen değerleri cache'le; yalnızca resize / font
+    // yüklenince yeniden hesapla. Her frame'de scrollWidth okumak layout
+    // thrash yaratıyordu ve prototipteki +80 buffer masaüstünde son
+    // kartın sağında 100+ piksellik boşluk bırakıyordu.
     let trackW = 0;
     let total = 0;
 
     const recalc = () => {
-      // Distance the track must shift so its right edge meets the viewport's
-      // right edge (track has `padding: 0 var(--pad)`, so the page's edge
-      // padding is preserved automatically — no extra buffer needed).
+      // Track'in sağ kenarı viewport'un sağ kenarına denk gelene kadar
+      // kayması gereken mesafe (track'te `padding: 0 var(--pad)` var, yani
+      // sayfa kenar boşluğu otomatik korunur — ekstra buffer gerekmez).
       trackW = Math.max(0, track.scrollWidth - window.innerWidth);
       total = Math.max(0, pin.offsetHeight - window.innerHeight);
     };
 
     recalc();
     window.addEventListener("resize", recalc);
-    // Card widths can shift once webfonts load — recompute when ready.
+    // Webfont'lar yüklenince kart genişlikleri değişebilir — hazır olunca yeniden hesapla.
     if (typeof document !== "undefined" && document.fonts?.ready) {
       document.fonts.ready.then(recalc);
     }

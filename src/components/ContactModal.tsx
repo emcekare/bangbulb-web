@@ -8,9 +8,10 @@ interface ContactModalProps {
 
 type Status = "idle" | "sending" | "ok" | "error";
 
-// Optional form endpoint. Set NEXT_PUBLIC_CONTACT_ENDPOINT in .env.local to a
-// Formspree (https://formspree.io/f/XXXX) or Web3Forms URL. If unset, the
-// form falls back to opening the visitor's mail client with prefilled data.
+// İsteğe bağlı form endpoint'i. .env.local içine NEXT_PUBLIC_CONTACT_ENDPOINT
+// olarak Formspree (https://formspree.io/f/XXXX) veya Web3Forms URL'i yaz.
+// Tanımlı değilse form, ziyaretçinin mail uygulamasını alanları önceden
+// doldurarak açmaya geri düşer.
 const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || "";
 const FALLBACK_EMAIL = "bangbulb@gmail.com";
 
@@ -32,7 +33,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
     };
   }, [open, onClose]);
 
-  // Reset state every time the modal closes so reopening is clean.
+  // Modal kapandığında state'i sıfırla — tekrar açılışta temiz başlasın.
   useEffect(() => {
     if (!open) {
       setStatus("idle");
@@ -47,7 +48,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
     const form = e.currentTarget;
     const data = new FormData(form);
 
-    // Honeypot — bots tend to fill every field; humans never see this one.
+    // Bal kavanozu — botlar her alanı doldurur; insanlar bu alanı görmez.
     if ((data.get("_gotcha") as string)?.length) {
       setStatus("ok");
       return;
@@ -56,7 +57,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
     setStatus("sending");
 
     if (!ENDPOINT) {
-      // No backend configured → open user's email client.
+      // Backend ayarlanmamış → kullanıcının mail uygulamasını aç.
       const subject = "BangBulb · İletişim formu";
       const body =
         `İsim: ${data.get("name")}\n` +
@@ -175,7 +176,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
               />
             </label>
 
-            {/* Honeypot field; styled off-screen via CSS class .cform__hp */}
+            {/* Bal kavanozu alanı; .cform__hp sınıfı ile ekran dışına alınmış */}
             <input
               type="text"
               name="_gotcha"
@@ -185,7 +186,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
               className="cform__hp"
             />
 
-            {/* Subject line for Formspree-style services */}
+            {/* Formspree benzeri servisler için konu satırı */}
             <input type="hidden" name="_subject" value="BangBulb iletişim formu" />
 
             {status === "error" && (

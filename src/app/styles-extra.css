@@ -114,14 +114,14 @@ html.is-loading body { overflow: hidden; }
 }
 .pcursor.is-label .pcursor__label { opacity: 1; }
 
-/* Hide custom cursor on touch / no-hover devices (mobile, tablets).
-   The component still mounts (effect bails early), but the wrapper
-   would otherwise leave the pinwheel image stuck at 0,0. */
+/* Dokunmatik / hover olmayan cihazlarda (mobil, tablet) özel imleci gizle.
+   Komponent yine de mount olur (effect erken çıkar) ama gizlenmezse
+   pervane resmi (0,0) konumunda asılı kalır. */
 @media (hover: none), (pointer: coarse) {
   .pcursor { display: none !important; }
 }
 
-/* hide old cursor when pinwheel cursor is active (it's a different component) */
+/* pinwheel imleç aktifken eski imleci gizle (ayrı bir komponent) */
 
 /* =========================================================
    SCROLL BG MORPH
@@ -266,9 +266,9 @@ body { background: var(--scroll-bg, var(--bg)); transition: background 0.1s line
   transform: scaleX(0);
 }
 
-/* Tighten the section header on narrow screens so the title doesn't
-   collapse into a ~100px column next to the "— 03 / seçilmiş işler" tag,
-   and shrink card width so 1 card fits per viewport with breathing room. */
+/* Dar ekranlarda bölüm başlığını sıkılaştır — başlık "— 03 / seçilmiş
+   işler" etiketi yanında ~100px'lik dar bir sütuna sıkışmasın. Kartı da
+   küçült ki viewport'a 1 kart rahatça sığsın. */
 @media (max-width: 640px) {
   .works__head {
     grid-template-columns: 1fr;
@@ -305,7 +305,7 @@ body { background: var(--scroll-bg, var(--bg)); transition: background 0.1s line
 .loader__wordmark--fill {
   position: absolute;
   inset: 0;
-  /* clipPath set inline from React; transition smooths frame jitter */
+  /* clipPath React'tan inline atanır; transition frame jitter'ını yumuşatır */
   transition: clip-path 0.12s linear;
   filter: drop-shadow(0 8px 30px rgba(245, 194, 74, 0.18));
 }
@@ -536,8 +536,8 @@ body { background: var(--scroll-bg, var(--bg)); transition: background 0.1s line
 }
 
 
-/* Slim, palette-matched scrollbar for the modal panel so the default
-   chunky scrollbar doesn't visually break the panel border. */
+/* Modal panel için palet uyumlu ince scrollbar — varsayılan kalın
+   scrollbar panel kenarını görsel olarak bozmasın. */
 .cmodal__panel {
   scrollbar-width: thin;
   scrollbar-color: rgba(239, 231, 214, 0.18) transparent;

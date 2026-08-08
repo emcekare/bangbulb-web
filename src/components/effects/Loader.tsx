@@ -65,9 +65,9 @@ export default function Loader({ onDone }: LoaderProps) {
 
   if (phase === "done") return null;
 
-  // Reveal the wordmark from left to right as the counter ticks up.
-  // Uses inset() clip-path: at n=0 the right side is fully clipped (100%),
-  // at n=100 nothing is clipped — the full logo is visible.
+  // Sayaç ilerledikçe logoyu soldan sağa açığa çıkar.
+  // inset() clip-path kullanılır: n=0'da sağ taraf tamamen kırpılır (%100),
+  // n=100'de kırpma kalmaz — logo tamamen görünür.
   const wordmarkClip = `inset(0 ${100 - n}% 0 0)`;
 
   return (
@@ -75,15 +75,15 @@ export default function Loader({ onDone }: LoaderProps) {
       <div className="loader__bg"></div>
       <div className="loader__center">
         <div className="loader__wordmark-stage">
-          {/* Faint placeholder — gives the eye an anchor at 0% */}
+          {/* Soluk placeholder — %0 anında göze sabit bir referans verir */}
           <div className="loader__wordmark loader__wordmark--ghost">
             <Image src={wordmarkSvg} alt="" width={520} height={350} />
           </div>
-          {/* Filled wordmark, revealed left→right with clip-path */}
+          {/* Renkli logo, clip-path ile soldan sağa açılarak ortaya çıkar */}
           <div className="loader__wordmark loader__wordmark--fill" style={{ clipPath: wordmarkClip }}>
             <Image src={wordmarkSvg} alt="BangBulb" width={520} height={350} priority />
           </div>
-          {/* Small spinning pinwheel as a kinetic accent */}
+          {/* Kinetik aksesuar olarak küçük dönen pervane */}
           <div className="loader__pinwheel-mini">
             <Image src={pinwheelSvg} alt="" width={64} height={64} />
           </div>

@@ -13,8 +13,8 @@ export default function PinwheelCursor({ enabled }: PinwheelCursorProps) {
   const pinRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Skip on touch / no-hover devices: there's no cursor to replace, and
-    // leaving body.no-cursor on hides any inherited cursor unnecessarily.
+    // Dokunmatik / hover olmayan cihazlarda atla: değiştirilecek imleç yok
+    // ve body.no-cursor açık kalırsa miras gelen imleç gereksiz yere gizlenir.
     const isCoarse =
       window.matchMedia("(pointer: coarse)").matches ||
       window.matchMedia("(hover: none)").matches;
