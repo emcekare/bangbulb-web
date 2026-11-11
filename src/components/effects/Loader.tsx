@@ -20,7 +20,7 @@ export default function Loader({ onDone }: LoaderProps) {
   useEffect(() => {
     document.documentElement.classList.add("is-loading");
     const start = performance.now();
-    const dur = 2200;
+    const dur = 400;
     let raf = 0;
     let exitTimer: number | undefined;
     let finished = false;
@@ -28,12 +28,13 @@ export default function Loader({ onDone }: LoaderProps) {
     const finish = () => {
       if (finished) return;
       finished = true;
+      // İçerik, perde açılırken görünsün: gizleme sınıfı çıkış başında kalkar.
+      document.documentElement.classList.remove("is-loading");
       setPhase("exiting");
       exitTimer = window.setTimeout(() => {
         setPhase("done");
-        document.documentElement.classList.remove("is-loading");
         onDoneRef.current?.();
-      }, 1100);
+      }, 250);
     };
 
     const tick = (t: number) => {
@@ -48,18 +49,19 @@ export default function Loader({ onDone }: LoaderProps) {
     };
     raf = requestAnimationFrame(tick);
 
-    // Emniyet supabı: rAF bir sebeple ilerlemezse loader'ı 5 sn'de kapat.
+    // Emniyet supabı: rAF bir sebeple ilerlemezse loader'ı 1 sn'de kapat.
     const failsafe = window.setTimeout(() => {
       if (!finished) {
         setN(100);
         finish();
       }
-    }, 5000);
+    }, 1000);
 
     return () => {
       cancelAnimationFrame(raf);
       if (exitTimer !== undefined) clearTimeout(exitTimer);
       clearTimeout(failsafe);
+      document.documentElement.classList.remove("is-loading");
     };
   }, []);
 
@@ -90,7 +92,7 @@ export default function Loader({ onDone }: LoaderProps) {
         </div>
       </div>
       <div className="loader__bottom">
-        <span className="mono">— reklam ajansı —</span>
+        <span className="mono">reklam ajansı</span>
         <span className="loader__counter mono">
           {String(n).padStart(3, "0")}
           <span style={{ opacity: 0.5 }}>%</span>

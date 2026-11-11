@@ -17,7 +17,7 @@ export default function Clients({ onShowAll }: ClientsProps) {
               Birlikte iş yaptıklarımız.
             </h2>
             <p className="s-head__sub">
-              Yedi yılda, on iki sektörde, iki ülkede — ama hep aynı ekiple.
+              Yedi yılda, on iki sektörde, iki ülkede ve hep aynı ekiple.
             </p>
           </div>
         </div>
@@ -25,13 +25,13 @@ export default function Clients({ onShowAll }: ClientsProps) {
         <div className="clients__grid reveal">
           {mainClients.map((c, i) => (
             <div className="client" key={i}>
-              <span className="client__name">{c.name}</span>
               <div className="client__logo-wrapper">
                 <Image
                   src={getAssetPath(`/assets/clients/${c.logo}`)}
                   alt={c.name}
                   fill
-                  style={{ objectFit: 'contain', padding: '12px' }}
+                  sizes="(max-width: 1100px) 33vw, 220px"
+                  style={{ objectFit: 'contain', padding: '10px' }}
                 />
               </div>
             </div>

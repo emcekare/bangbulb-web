@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer__row">
-        <div>© 2026 BangBulb · reklam ajansı</div>
+        <div>© {new Date().getFullYear()} BangBulb · reklam ajansı</div>
         <ul className="footer__social">
           {socialLinks.map((s) =>
             s.url ? (

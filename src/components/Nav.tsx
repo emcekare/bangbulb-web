@@ -38,13 +38,14 @@ export default function Nav({ onContactClick }: NavProps) {
           <Image src={pinwheelSvg} alt="" width={32} height={32} />
         </span>
         <span className="nav__brand-text">
-          Bangbulb<span style={{ opacity: 0.5 }}>®</span> 2026
+          BangBulb
         </span>
       </a>
       <div className="nav__links">
         <a href="#hizmetler" data-cursor="hover">Hizmetler</a>
         <a href="#islerimiz" data-cursor="hover">İşler</a>
         <a href="#surec" data-cursor="hover">Süreç</a>
+        <a href="#referanslar" data-cursor="hover">Referanslar</a>
         <a href="#ekip" data-cursor="hover">Ekip</a>
         <a href="#iletisim" data-cursor="hover">İletişim</a>
       </div>

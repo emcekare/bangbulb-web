@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAssetPath } from "@/lib/asset";
 import { useModalA11y } from "@/hooks/useModalA11y";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { archiveUrl } from "@/content/links";
 import { works, behanceEmbedSrc } from "@/content/works";
 
@@ -9,7 +10,9 @@ export default function Works() {
   const pinRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
   const modalPanelRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
   const [modalLink, setModalLink] = useState<string | null>(null);
 
   const closeModal = useCallback(() => setModalLink(null), []);
@@ -40,70 +43,114 @@ export default function Works() {
   useEffect(() => {
     const pin = pinRef.current;
     const track = trackRef.current;
+    const fill = fillRef.current;
     if (!pin || !track) return;
 
+    // Hareket azaltma: sabitleme yok, track normal yatay kaydırılır.
+    if (reduced) {
+      track.style.transform = "";
+      if (fill) fill.style.transform = "";
+      return;
+    }
+
     // Layout'tan türeyen değerleri cache'le; yalnızca resize / font
-    // yüklenince yeniden hesapla. Her frame'de scrollWidth okumak layout
-    // thrash yaratıyordu ve prototipteki +80 buffer masaüstünde son
-    // kartın sağında 100+ piksellik boşluk bırakıyordu.
+    // yüklenince yeniden hesapla (her karede scrollWidth okumak layout
+    // thrash yaratıyordu).
     let trackW = 0;
     let total = 0;
+    let raf = 0;
+    let active = false;
 
     const recalc = () => {
       // Track'in sağ kenarı viewport'un sağ kenarına denk gelene kadar
-      // kayması gereken mesafe (track'te `padding: 0 var(--pad)` var, yani
-      // sayfa kenar boşluğu otomatik korunur — ekstra buffer gerekmez).
+      // kayması gereken mesafe (track'te `padding: 0 var(--pad)` var).
       trackW = Math.max(0, track.scrollWidth - window.innerWidth);
       total = Math.max(0, pin.offsetHeight - window.innerHeight);
     };
 
+    const update = () => {
+      raf = 0;
+      if (total <= 0 || trackW <= 0) return;
+      const r = pin.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, -r.top / total));
+      track.style.transform = `translateX(${-p * trackW}px)`;
+      if (fill) fill.style.transform = `scaleX(${p})`;
+    };
+
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    const onResize = () => {
+      recalc();
+      onScroll();
+    };
+
     recalc();
-    window.addEventListener("resize", recalc);
-    // Webfont'lar yüklenince kart genişlikleri değişebilir — hazır olunca yeniden hesapla.
-    if (typeof document !== "undefined" && document.fonts?.ready) {
-      document.fonts.ready.then(recalc);
+    update();
+    window.addEventListener("resize", onResize);
+    // Webfont'lar yüklenince kart genişlikleri değişebilir.
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(onResize);
     }
 
-    let raf = 0;
-    const tick = () => {
-      if (total > 0 && trackW > 0) {
-        const r = pin.getBoundingClientRect();
-        const passed = -r.top;
-        const p = Math.max(0, Math.min(1, passed / total));
-        track.style.transform = `translateX(${-p * trackW}px)`;
-        const fill = document.getElementById("works-progress-fill");
-        if (fill) fill.style.transform = `scaleX(${p})`;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    // Scroll dinleyicisi yalnızca bölüm viewport'a yakınken bağlı.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !active) {
+          active = true;
+          recalc();
+          window.addEventListener("scroll", onScroll, { passive: true });
+          update();
+        } else if (!entry.isIntersecting && active) {
+          active = false;
+          window.removeEventListener("scroll", onScroll);
+          if (raf) cancelAnimationFrame(raf);
+          update(); // son konumu (baş ya da son) kesinleştir
+        }
+      },
+      { rootMargin: "100% 0px 100% 0px" }
+    );
+    io.observe(pin);
 
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", recalc);
+      io.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [reduced]);
 
   return (
-    <section className="works" id="islerimiz" ref={pinRef}>
+    <section
+      className="works"
+      id="islerimiz"
+      ref={pinRef}
+      // Sabitlenen bölümün kaydırma mesafesi: kart başına 300 px.
+      style={{ "--works-scroll": `${works.length * 300}px` } as React.CSSProperties}
+    >
       <div className="works__sticky">
         <div className="container works__head reveal">
           <div className="s-head__num">— 03 / seçilmiş işler</div>
           <div>
             <h2 className="s-head__title display">
-              Vitrin{" "}
+              Vitrin.{" "}
               <span style={{ fontStyle: "italic", color: "var(--sage-2)" }}>
-                — sıkıcı kısmı atladık.
+                Sıkıcı kısmı atladık.
               </span>
             </h2>
             <p className="s-head__sub">
               Marka kimliğinden 30 saniyelik filme, ambalajdan içerik serisine.
-              ↓ aşağı scroll → yatay galeri kayar.
             </p>
           </div>
         </div>
 
-        <div className="works__viewport">
+        <div
+          className="works__viewport"
+          {...(reduced
+            ? { tabIndex: 0, role: "region", "aria-label": "Seçilmiş işler, yatay kaydırılır" }
+            : {})}
+        >
           <div className="works__track" ref={trackRef}>
             {works.map((w, i) => (
               <article
@@ -147,12 +194,13 @@ export default function Works() {
                         aria-hidden="true"
                         style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                       />
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 0 }}></div>
                     </>
                   )}
-                  <div className="hwork__media-label" style={{ zIndex: 1, color: w.video ? '#fff' : undefined }}>
-                    {w.title.toUpperCase()} / {w.cat} / {w.year}
-                  </div>
+                  {!w.video && (
+                    <div className="hwork__media-label" style={{ zIndex: 1 }}>
+                      {w.title.toUpperCase()} / {w.cat} / {w.year}
+                    </div>
+                  )}
                 </div>
                 <div className="hwork__meta">
                   <h3 className="hwork__title display">{w.title}</h3>
@@ -192,12 +240,8 @@ export default function Works() {
 
         <div className="works__progress">
           <div className="works__progress-track">
-            <div
-              className="works__progress-fill"
-              id="works-progress-fill"
-            ></div>
+            <div className="works__progress-fill" ref={fillRef}></div>
           </div>
-          <span className="mono">scroll ↓ horizontal</span>
         </div>
       </div>
 

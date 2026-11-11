@@ -113,6 +113,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
 
       form.reset();
       setStatus("ok");
+      window.dispatchEvent(new CustomEvent("bb:form-sent"));
     } catch {
       // Ağ hatası — fetch reddedildi, HTTP yanıtı hiç gelmedi.
       setErrorMsg(

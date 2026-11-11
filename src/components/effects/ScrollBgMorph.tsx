@@ -28,15 +28,24 @@ const colorAt = (p: number) => {
 
 export default function ScrollBgMorph() {
   useEffect(() => {
-    let raf: number;
-    const tick = () => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = Math.max(0, Math.min(1, window.scrollY / max));
+      const p = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
       document.documentElement.style.setProperty("--scroll-bg", colorAt(p));
-      raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
   return null;
 }
