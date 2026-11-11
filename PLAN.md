@@ -18,7 +18,7 @@ Durum sütunu: ✅ bitti, 🟡 kısmen, ⏳ bekliyor, 🔒 dış bağımlılık.
 | 1.3 | 🟡 | Yazım hatası düzeltildi. 5 fotoğraf ve gerçek isimler bekleniyor |
 | 1.4 | ✅ | Blog kaldırıldı |
 | 1.5 – 1.9 | 🔒 | Ajans kararı ve teyidi bekliyor |
-| 2.1 | 🟡 | Alt yol `NEXT_PUBLIC_BASE_PATH` ile ayarlanabilir. Alan adı ve CNAME bekliyor |
+| 2.1 | 🟡 | Alt yol `NEXT_PUBLIC_BASE_PATH` ile ayarlanabilir (kök için `/`). Alan adı ve CNAME bekliyor |
 | 2.2 | 🔒 | Web3Forms anahtarı |
 | 2.3 | 🔒 | KVKK metni ve hukuki onay |
 | 2.4 | ✅ | metadata, canonical, OG görseli, sitemap, robots, JSON-LD |

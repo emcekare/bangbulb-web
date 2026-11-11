@@ -30,7 +30,7 @@ Node 22 önerilir (CI aynı sürümü kullanıyor).
 - `NEXT_PUBLIC_WEB3FORMS_KEY`: iletişim formu. Boşsa form ziyaretçinin mail uygulamasını açar.
 - `NEXT_PUBLIC_UMAMI_SRC`, `NEXT_PUBLIC_UMAMI_WEBSITE_ID`: analytics. İkisinden biri boşsa hiçbir şey yüklenmez.
 - `NEXT_PUBLIC_SITE_URL`: canonical, OG ve sitemap için. Varsayılan `https://bangbulb.com`.
-- `NEXT_PUBLIC_BASE_PATH`: yayın alt yolu. Tanımsızsa production'da `/bangbulb-web`. Alan adı kökü için boş değer verin.
+- `NEXT_PUBLIC_BASE_PATH`: yayın alt yolu. Tanımsızsa production'da `/bangbulb-web`. Alan adı kökü için `/` verin (boş değer tanımsız sayılır).
 
 ## Yapı
 
@@ -47,7 +47,7 @@ Masaüstü ve mobil iki ayrı bileşen ağacıdır. İkisi de veriyi `src/conten
 
 ## Deploy
 
-`master` dalına push, `.github/workflows/deploy.yml` ile GitHub Pages'e yayınlar. Production build varsayılan olarak `/bangbulb-web` alt yolunda çalışır. Alan adına geçişte `NEXT_PUBLIC_BASE_PATH` repo değişkenini boş değerle tanımlayın ve `public/CNAME` ekleyin (PLAN 2.1).
+`master` dalına push, `.github/workflows/deploy.yml` ile GitHub Pages'e yayınlar. Production build varsayılan olarak `/bangbulb-web` alt yolunda çalışır. Alan adına geçişte `NEXT_PUBLIC_BASE_PATH` repo değişkenini `/` olarak tanımlayın ve `public/CNAME` ekleyin (PLAN 2.1).
 
 ## Dikkat
 
