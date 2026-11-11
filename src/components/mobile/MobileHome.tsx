@@ -5,7 +5,7 @@ import pinwheelSvg from "../../../public/assets/bangbulb-pinwheel.svg";
 import { getAssetPath } from "@/lib/asset";
 import { useModalA11y } from "@/hooks/useModalA11y";
 import { works, behanceEmbedSrc } from "@/content/works";
-import { serviceItems } from "@/content/services";
+import { serviceItems, serviceGroups } from "@/content/services";
 import { processSteps } from "@/content/process";
 import { teamMembers, initials } from "@/content/team";
 import { mainClients, allClients } from "@/content/clients";
@@ -38,20 +38,16 @@ export default function MobileHome({
   const videoRef = useRef<HTMLVideoElement>(null);
   const processRef = useRef<HTMLElement>(null);
   const modalPanelRef = useRef<HTMLDivElement>(null);
-  const serviceModalRef = useRef<HTMLDivElement>(null);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeWork, setActiveWork] = useState(0);
-  const [selectedService, setSelectedService] = useState<
-    (typeof serviceItems)[number] | null
-  >(null);
+  const [openService, setOpenService] = useState<string | null>(null);
   const [processInView, setProcessInView] = useState(false);
   const [modalLink, setModalLink] = useState<string | null>(null);
 
   const openDrawer = useCallback(() => setDrawerOpen(true), []);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
   const closeWorkModal = useCallback(() => setModalLink(null), []);
-  const closeServiceModal = useCallback(() => setSelectedService(null), []);
 
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -59,7 +55,13 @@ export default function MobileHome({
       setDrawerOpen(false);
       window.setTimeout(() => {
         const el = document.querySelector(href);
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const reduce = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
+        el?.scrollIntoView({
+          behavior: reduce ? "auto" : "smooth",
+          block: "start",
+        });
       }, 60);
     },
     []
@@ -67,7 +69,6 @@ export default function MobileHome({
 
   useModalA11y(drawerOpen, closeDrawer, sheetRef);
   useModalA11y(modalLink !== null, closeWorkModal, modalPanelRef);
-  useModalA11y(selectedService !== null, closeServiceModal, serviceModalRef);
 
   useEffect(() => {
     if (
@@ -99,8 +100,23 @@ export default function MobileHome({
     const scroller = worksScrollerRef.current;
     if (!scroller) return;
     const onScroll = () => {
-      const cardW = scroller.firstElementChild?.clientWidth || 1;
-      const idx = Math.round(scroller.scrollLeft / (cardW + 14));
+      // Başlangıç hizasına en yakın kartı bul, en sağdaysa sonuncuyu seç.
+      const cards = Array.from(scroller.children) as HTMLElement[];
+      const atEnd =
+        scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 2;
+      let idx = 0;
+      if (atEnd) {
+        idx = cards.length - 1;
+      } else {
+        let best = Infinity;
+        cards.forEach((c, i) => {
+          const d = Math.abs(c.offsetLeft - 20 - scroller.scrollLeft);
+          if (d < best) {
+            best = d;
+            idx = i;
+          }
+        });
+      }
       setActiveWork(Math.max(0, Math.min(works.length - 1, idx)));
     };
     scroller.addEventListener("scroll", onScroll, { passive: true });
@@ -306,6 +322,11 @@ export default function MobileHome({
               İşleri Gör ↓
             </a>
           </div>
+
+          <p className="m-hero__trust">
+            2019&apos;dan beri · {teamMembers.length} kişi · {allClients.length}{" "}
+            marka
+          </p>
         </section>
 
         {/* 2. SEÇİLMİŞ İŞLER */}
@@ -317,14 +338,20 @@ export default function MobileHome({
           </div>
 
           <div className="m-carousel-bleed">
-            <div className="m-works-scroller" ref={worksScrollerRef}>
+            <div
+              className="m-works-scroller"
+              ref={worksScrollerRef}
+              role="region"
+              aria-label="Seçilmiş işler, yatay kaydırılır"
+              tabIndex={0}
+            >
               {works.map((w) => (
                 <article
-                  className="m-work-card"
+                  className={
+                    "m-work-card " + (w.link ? "m-work-card--link" : "")
+                  }
                   key={w.id}
-                  onClick={() => {
-                    if (w.link) setModalLink(w.link);
-                  }}
+                  aria-labelledby={`m-work-title-${w.id}`}
                 >
                   <div className={"m-work-card__media work__bg-" + w.layout}>
                     {w.video && (
@@ -356,14 +383,24 @@ export default function MobileHome({
                       </>
                     )}
 
+                    {/* TODO: Work tipine `image` alanı eklendiğinde gerçek görsel
+                        burada (video yoksa) <Image fill /> olarak render edilecek.
+                        O zamana kadar yalnızca gradyan ve başlık gösterilir. */}
                     {!w.video && (
-                      <div className="m-work-card__center-label">{w.title}</div>
+                      <div className="m-work-card__center-label" aria-hidden="true">
+                        {w.title}
+                      </div>
                     )}
                   </div>
 
                   <div className="m-work-card__body">
                     <div>
-                      <h3 className="m-work-card__title">{w.title}</h3>
+                      <h3
+                        className="m-work-card__title"
+                        id={`m-work-title-${w.id}`}
+                      >
+                        {w.title}
+                      </h3>
                       <div className="m-work-card__meta">{w.cat}</div>
                     </div>
 
@@ -371,10 +408,8 @@ export default function MobileHome({
                       <button
                         type="button"
                         className="m-work-card__btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setModalLink(w.link!);
-                        }}
+                        aria-label={`${w.title} işini incele`}
+                        onClick={() => setModalLink(w.link!)}
                       >
                         İncele ↗
                       </button>
@@ -385,7 +420,11 @@ export default function MobileHome({
             </div>
           </div>
 
-          <div className="m-dots" aria-hidden="true">
+          <div
+            className="m-dots"
+            role="img"
+            aria-label={`İş ${activeWork + 1} / ${works.length}`}
+          >
             {works.map((w, idx) => (
               <span
                 key={w.id}
@@ -395,7 +434,7 @@ export default function MobileHome({
           </div>
         </section>
 
-        {/* 3. 360° HİZMETLER — 2 sütunlu sade kutular, tıklayınca küçük detay modalı açılır */}
+        {/* 3. 360° HİZMETLER: gruplu, tek seferde bir kalem açılan akordeon */}
         <section className="m-section m-section--alt" id="m-hizmetler">
           <div className="m-sec-head">
             <h2 className="m-sec-head__title">
@@ -403,21 +442,56 @@ export default function MobileHome({
             </h2>
           </div>
 
-          <div className="m-service-chips">
-            {serviceItems.map((s) => (
-              <button
-                type="button"
-                className="m-service-chip"
-                key={s.num}
-                onClick={() => setSelectedService(s)}
-              >
-                <span>{s.name}</span>
-                <span className="m-service-chip__arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </button>
-            ))}
-          </div>
+          {serviceGroups.map((g) => (
+            <div className="m-sgroup" key={g.id}>
+              <h3 className="m-sgroup__title">{g.label}</h3>
+              <ul className="m-acc">
+                {serviceItems
+                  .filter((s) => s.group === g.id)
+                  .map((s) => {
+                    const open = openService === s.num;
+                    return (
+                      <li
+                        className={"m-acc__item " + (open ? "is-open" : "")}
+                        key={s.num}
+                      >
+                        <h4 className="m-acc__head">
+                          <button
+                            type="button"
+                            className="m-acc__btn"
+                            id={`m-acc-btn-${s.num}`}
+                            aria-expanded={open}
+                            aria-controls={`m-acc-panel-${s.num}`}
+                            onClick={() => setOpenService(open ? null : s.num)}
+                          >
+                            <span className="m-acc__num">{s.num}</span>
+                            <span className="m-acc__name">{s.name}</span>
+                            <span className="m-acc__icon" aria-hidden="true" />
+                          </button>
+                        </h4>
+                        <div
+                          className="m-acc__panel"
+                          id={`m-acc-panel-${s.num}`}
+                          role="region"
+                          aria-labelledby={`m-acc-btn-${s.num}`}
+                          hidden={!open}
+                        >
+                          <div className="m-acc__tag">{s.tag}</div>
+                          <p className="m-acc__desc">{s.desc}</p>
+                          <button
+                            type="button"
+                            className="m-btn m-btn--primary m-acc__cta"
+                            onClick={onContactClick}
+                          >
+                            Bu hizmet için yaz
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
+              </ul>
+            </div>
+          ))}
         </section>
 
         {/* 4. İŞLEYİŞ — Masaüstündeki sırayla yanan sarı düğümler ve çizgi animasyonu */}
@@ -460,6 +534,36 @@ export default function MobileHome({
           </div>
         </section>
 
+        {/* NİYE BİZ */}
+        <section className="m-section m-why" id="m-neden">
+          <div className="m-sec-head">
+            <h2 className="m-sec-head__title">
+              Niye <span className="ital">biz?</span>
+            </h2>
+          </div>
+          <p className="m-why__lead">
+            Sekiz kişiyiz, hepimiz aynı odadayız. Kararı bir öğle yemeğinde
+            alırız.
+          </p>
+          <dl className="m-why__stats">
+            <div className="m-why__stat">
+              <dt>kuruluş</dt>
+              <dd>2019</dd>
+            </div>
+            <div className="m-why__stat">
+              <dt>tam zamanlı ekip</dt>
+              <dd>{teamMembers.length}</dd>
+            </div>
+            <div className="m-why__stat">
+              <dt>hizmet kalemi</dt>
+              <dd>{serviceItems.length}</dd>
+            </div>
+          </dl>
+          <p className="m-why__partners">
+            Partner ajanslar: Kafa Medya, BeBu Ajans, F2R Medya
+          </p>
+        </section>
+
         {/* 5. REFERANSLAR */}
         <section className="m-section" id="m-referanslar">
           <div className="m-sec-head">
@@ -500,7 +604,12 @@ export default function MobileHome({
           </div>
 
           <div className="m-carousel-bleed">
-            <div className="m-team-scroller">
+            <div
+              className="m-team-scroller"
+              role="region"
+              aria-label="Ekip, yatay kaydırılır"
+              tabIndex={0}
+            >
               {teamMembers.map((m, idx) => (
                 <div className="m-member-card" key={idx}>
                   <div className="m-member-card__avatar">
@@ -548,10 +657,37 @@ export default function MobileHome({
               <span className="m-contact-card__label">Telefon</span>
               <span className="m-contact-card__val">{contact.phone.display}</span>
             </a>
+            <a
+              href={`tel:${contact.phoneSecondary.tel}`}
+              className="m-contact-card"
+            >
+              <span className="m-contact-card__label">Telefon 2</span>
+              <span className="m-contact-card__val">
+                {contact.phoneSecondary.display}
+              </span>
+            </a>
             <a href={`mailto:${contact.email}`} className="m-contact-card">
               <span className="m-contact-card__label">E-posta</span>
               <span className="m-contact-card__val">{contact.email}</span>
             </a>
+            <a
+              href={`mailto:${contact.emailSecondary}`}
+              className="m-contact-card"
+            >
+              <span className="m-contact-card__label">E-posta 2</span>
+              <span className="m-contact-card__val">
+                {contact.emailSecondary}
+              </span>
+            </a>
+          </div>
+
+          <div className="m-hours">
+            <div className="m-contact-card__label">Çalışma saatleri</div>
+            {contact.hours.map((h) => (
+              <div className="m-hours__row" key={h}>
+                {h}
+              </div>
+            ))}
           </div>
 
           <div className="m-address-line">{contact.addressShort}</div>
@@ -572,55 +708,10 @@ export default function MobileHome({
                 ))}
             </ul>
           )}
-          <div className="m-footer__copy">© 2026 BangBulb · Şişli, İstanbul</div>
+          <div className="m-footer__copy">© {new Date().getFullYear()} BangBulb · Şişli, İstanbul</div>
           <div className="m-footer__wordmark">bangbulb.</div>
         </footer>
       </main>
-
-      {/* Küçük Hizmet Detay Modalı */}
-      {selectedService && (
-        <div
-          className="m-smodal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="m-smodal-title"
-        >
-          <div
-            className="m-smodal__backdrop"
-            onClick={closeServiceModal}
-          />
-          <div className="m-smodal__panel" ref={serviceModalRef}>
-            <button
-              type="button"
-              className="m-smodal__close"
-              aria-label="Kapat"
-              onClick={closeServiceModal}
-            >
-              ×
-            </button>
-            <div className="m-smodal__meta">
-              <span>{selectedService.num}</span>
-              <span>·</span>
-              <span>{selectedService.tag}</span>
-            </div>
-            <h3 id="m-smodal-title" className="m-smodal__title">
-              {selectedService.name}
-            </h3>
-            <p className="m-smodal__desc">{selectedService.desc}</p>
-            <button
-              type="button"
-              className="m-btn m-btn--primary"
-              style={{ width: "100%", marginTop: "6px" }}
-              onClick={() => {
-                closeServiceModal();
-                onContactClick();
-              }}
-            >
-              Bu Hizmet İçin Yaz
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Behance İş Önizleme Modalı */}
       {modalLink && (
@@ -658,7 +749,7 @@ export default function MobileHome({
           >
             <div
               style={{
-                height: "44px",
+                minHeight: "52px",
                 backgroundColor: "#2a2a2a",
                 display: "flex",
                 alignItems: "center",
@@ -672,6 +763,9 @@ export default function MobileHome({
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  minHeight: "44px",
                   color: "#f5c24a",
                   fontSize: "12px",
                   fontFamily: "var(--font-mono)",
@@ -688,9 +782,9 @@ export default function MobileHome({
                   background: "none",
                   border: "none",
                   color: "#fff",
-                  fontSize: "22px",
-                  width: "32px",
-                  height: "32px",
+                  fontSize: "26px",
+                  width: "44px",
+                  height: "44px",
                 }}
               >
                 ×

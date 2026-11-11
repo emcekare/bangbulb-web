@@ -78,6 +78,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  min-height: 44px;
   color: var(--cream);
 }
 
@@ -111,8 +112,8 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  height: 34px;
-  padding: 0 13px;
+  min-height: 44px;
+  padding: 0 16px;
   border-radius: 999px;
   border: 1px solid rgba(245, 194, 74, 0.45);
   background: rgba(245, 194, 74, 0.12);
@@ -132,8 +133,8 @@ html {
 }
 
 .m-topbar__menu-btn {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.03);
@@ -212,8 +213,8 @@ html {
 }
 
 .m-drawer__close {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: 1px solid var(--line-strong);
   display: grid;
@@ -260,6 +261,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 48px;
   padding: 14px 16px;
   border-radius: 999px;
   font-family: var(--font-mono);
@@ -278,8 +280,12 @@ html {
 
 .m-drawer__QuickSub a {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
   text-align: center;
-  padding: 11px 12px;
+  padding: 0 12px;
   border-radius: 999px;
   border: 1px solid var(--line-strong);
   font-family: var(--font-mono);
@@ -367,6 +373,15 @@ html {
   margin-top: 4px;
 }
 
+.m-hero__trust {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage-2);
+}
+
 .m-btn {
   display: inline-flex;
   align-items: center;
@@ -431,7 +446,6 @@ html {
    ========================================================= */
 .m-carousel-bleed {
   margin: 0 -20px;
-  padding: 0 20px;
 }
 
 .m-works-scroller {
@@ -441,7 +455,8 @@ html {
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
-  padding-bottom: 4px;
+  padding: 0 20px 4px;
+  scroll-padding: 0 20px;
 }
 
 .m-works-scroller::-webkit-scrollbar {
@@ -449,9 +464,9 @@ html {
 }
 
 .m-work-card {
-  flex: 0 0 80vw;
-  max-width: 330px;
-  scroll-snap-align: center;
+  position: relative;
+  flex: 0 0 min(78vw, 330px);
+  scroll-snap-align: start;
   background: var(--bg-2);
   border: 1px solid var(--line-strong);
   border-radius: 14px;
@@ -506,7 +521,8 @@ html {
 
 .m-work-card__btn {
   flex-shrink: 0;
-  padding: 8px 13px;
+  min-height: 44px;
+  padding: 0 16px;
   border-radius: 999px;
   background: var(--accent);
   color: #0c1816;
@@ -515,6 +531,34 @@ html {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* Yalnızca bağlantısı olan kart tıklanabilir görünür: buton alanı tüm karta yayılır. */
+.m-work-card--link {
+  cursor: pointer;
+}
+
+.m-work-card--link .m-work-card__btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.m-work-card--link .m-work-card__btn:focus-visible {
+  outline: none;
+}
+
+.m-work-card--link:has(.m-work-card__btn:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.m-works-scroller:focus-visible,
+.m-team-scroller:focus-visible,
+.m-acc__btn:focus-visible,
+.m-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .m-dots {
@@ -538,7 +582,7 @@ html {
 }
 
 /* =========================================================
-   3. 360° HİZMETLER — 2 Sütunlu Sade Kutular + Küçük Detay Modalı
+   3. 360° HİZMETLER: gruplu akordeon
    ========================================================= */
 .m-eyebrow {
   font-family: var(--font-mono);
@@ -549,114 +593,120 @@ html {
   margin-bottom: 8px;
 }
 
-.m-service-chips {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.m-sgroup + .m-sgroup {
+  margin-top: 28px;
 }
 
-.m-service-chip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 13px 12px;
-  border-radius: 10px;
-  background: rgba(12, 24, 22, 0.72);
-  border: 1px solid var(--line);
-  font-size: 14px;
-  line-height: 1.25;
-  color: var(--cream);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.2s var(--easing), background 0.2s var(--easing);
-}
-
-.m-service-chip:active {
-  border-color: var(--accent);
-  background: rgba(245, 194, 74, 0.12);
-}
-
-.m-service-chip__arrow {
-  flex-shrink: 0;
+.m-sgroup__title {
+  margin: 0 0 10px;
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--accent);
-  opacity: 0.85;
-}
-
-.m-smodal {
-  position: fixed;
-  inset: 0;
-  z-index: 9500;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-}
-
-.m-smodal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(6, 13, 12, 0.82);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  animation: cmodal-fade 0.2s var(--easing) both;
-}
-
-.m-smodal__panel {
-  position: relative;
-  width: min(360px, 100%);
-  background: var(--bg-2);
-  border: 1px solid var(--line-strong);
-  border-radius: 14px;
-  padding: 24px 20px 20px;
-  color: var(--cream);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: cmodal-rise 0.28s var(--easing-spring) both;
-}
-
-.m-smodal__close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  color: var(--cream);
-}
-
-.m-smodal__meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 10px;
+  font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
-.m-smodal__title {
-  font-family: var(--font-display);
-  font-size: 26px;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+.m-acc {
+  list-style: none;
   margin: 0;
-  padding-right: 28px;
+  padding: 0;
+  border-top: 1px solid var(--line-strong);
 }
 
-.m-smodal__desc {
-  margin: 2px 0 4px;
+.m-acc__item {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.m-acc__head {
+  margin: 0;
+  font: inherit;
+}
+
+.m-acc__btn {
+  width: 100%;
+  min-height: 56px;
+  display: grid;
+  grid-template-columns: 28px 1fr 44px;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  text-align: left;
+  color: var(--cream);
+  cursor: pointer;
+}
+
+.m-acc__num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--sage-2);
+}
+
+.m-acc__name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.m-acc__icon {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+
+.m-acc__icon::before,
+.m-acc__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 1.5px;
+  margin: -0.75px 0 0 -7px;
+  background: var(--accent);
+  transition: transform 0.25s var(--easing);
+}
+
+.m-acc__icon::after {
+  transform: rotate(90deg);
+}
+
+.m-acc__item.is-open .m-acc__icon::after {
+  transform: rotate(0deg);
+}
+
+.m-acc__item.is-open .m-acc__name {
+  color: var(--accent);
+}
+
+.m-acc__panel {
+  padding: 0 0 18px 34px;
+}
+
+.m-acc__panel[hidden] {
+  display: none;
+}
+
+.m-acc__tag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage-2);
+  margin-bottom: 6px;
+}
+
+.m-acc__desc {
+  margin: 0 0 14px;
   font-size: 14px;
   line-height: 1.55;
   color: var(--cream-dim);
+}
+
+.m-acc__cta {
+  width: 100%;
 }
 
 /* =========================================================
@@ -796,7 +846,8 @@ html {
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
-  padding-bottom: 4px;
+  padding: 0 20px 4px;
+  scroll-padding: 0 20px;
 }
 
 .m-team-scroller::-webkit-scrollbar {
@@ -804,8 +855,7 @@ html {
 }
 
 .m-member-card {
-  flex: 0 0 44vw;
-  max-width: 176px;
+  flex: 0 0 min(38vw, 176px);
   scroll-snap-align: start;
   background: rgba(12, 24, 22, 0.75);
   border: 1px solid var(--line);
@@ -857,16 +907,18 @@ html {
    ========================================================= */
 .m-contact-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 8px;
   margin: 12px 0 16px;
 }
 
 .m-contact-card {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 14px;
   border-radius: 10px;
   background: rgba(239, 231, 214, 0.04);
   border: 1px solid var(--line-strong);
@@ -884,7 +936,74 @@ html {
   font-family: var(--font-display);
   font-size: 16px;
   color: var(--cream);
-  word-break: break-word;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.m-hours {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px dashed var(--line-strong);
+}
+
+.m-hours__row {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--cream-dim);
+}
+
+/* Niye biz */
+.m-why__lead {
+  margin: 0 0 22px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+}
+
+.m-why__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.m-why__stat {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 14px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(239, 231, 214, 0.04);
+}
+
+.m-why__stat dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+
+.m-why__stat dt {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage-2);
+}
+
+.m-why__partners {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cream-dim);
 }
 
 .m-address-line {
@@ -914,6 +1033,13 @@ html {
   color: var(--sage-2);
 }
 
+.m-footer__socials a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+}
+
 .m-footer__copy {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -932,4 +1058,51 @@ html {
   color: var(--ink);
   margin-top: 16px;
   user-select: none;
+}
+
+/* =========================================================
+   AZALTILMIŞ HAREKET
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .m-hero__orb-spin {
+    animation: none;
+  }
+
+  .m-topbar,
+  .m-drawer,
+  .m-drawer__backdrop,
+  .m-drawer__sheet,
+  .m-acc__icon::before,
+  .m-acc__icon::after,
+  .m-dot {
+    transition: none !important;
+  }
+
+  /* İşleyiş: çizgi ve düğümler doğrudan son halinde */
+  .m-psteps__line-fill {
+    transform: scaleY(1);
+    transition: none;
+  }
+
+  .m-pstep__node {
+    background: var(--accent);
+    color: #0c1816;
+    border-color: var(--accent);
+    font-weight: 600;
+    box-shadow: 0 0 24px rgba(245, 194, 74, 0.28);
+    transition: none;
+    transition-delay: 0s;
+  }
+}
+
+/* Dar ekranlarda hero butonları tek satırda kalsın */
+@media (max-width: 380px) {
+  .m-hero__cta-row .m-btn {
+    letter-spacing: 0.06em;
+    padding: 0 10px;
+  }
 }
