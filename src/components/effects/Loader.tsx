@@ -23,7 +23,6 @@ export default function Loader({ onDone }: LoaderProps) {
     const dur = 2200;
     let raf = 0;
     let exitTimer: number | undefined;
-    let failsafe: number | undefined;
     let finished = false;
 
     const finish = () => {
@@ -49,7 +48,8 @@ export default function Loader({ onDone }: LoaderProps) {
     };
     raf = requestAnimationFrame(tick);
 
-    failsafe = window.setTimeout(() => {
+    // Emniyet supabı: rAF bir sebeple ilerlemezse loader'ı 5 sn'de kapat.
+    const failsafe = window.setTimeout(() => {
       if (!finished) {
         setN(100);
         finish();
@@ -59,7 +59,7 @@ export default function Loader({ onDone }: LoaderProps) {
     return () => {
       cancelAnimationFrame(raf);
       if (exitTimer !== undefined) clearTimeout(exitTimer);
-      if (failsafe !== undefined) clearTimeout(failsafe);
+      clearTimeout(failsafe);
     };
   }, []);
 
@@ -88,10 +88,6 @@ export default function Loader({ onDone }: LoaderProps) {
             <Image src={pinwheelSvg} alt="" width={64} height={64} />
           </div>
         </div>
-      </div>
-      <div className="loader__top">
-        <span className="mono">BangBulb® / 2026</span>
-        <span className="mono">v.07 — yükleniyor</span>
       </div>
       <div className="loader__bottom">
         <span className="mono">— reklam ajansı —</span>

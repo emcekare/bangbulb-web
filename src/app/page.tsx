@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useReveal } from "@/hooks/useReveal";
 
 import Loader from "@/components/effects/Loader";
@@ -19,19 +19,22 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
 import ContactModal from "@/components/ContactModal";
 import ClientsModal from "@/components/ClientsModal";
+import MobileHome from "@/components/mobile/MobileHome";
 
-export default function Home() {
-  const [loaded, setLoaded] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
-  const [clientsModalOpen, setClientsModalOpen] = useState(false);
+function DesktopHome({
+  onContactClick,
+  onShowAllClients,
+}: {
+  onContactClick: () => void;
+  onShowAllClients: () => void;
+}) {
   useReveal();
 
   return (
-    <>
-      {!loaded && <Loader onDone={() => setLoaded(true)} />}
+    <div className="desktop-shell">
       <ScrollBgMorph />
       <PinwheelCursor enabled={true} />
-      <Nav onContactClick={() => setContactOpen(true)} />
+      <Nav onContactClick={onContactClick} />
       <Hero />
       <Marquee />
       <Services />
@@ -39,12 +42,55 @@ export default function Home() {
       <Works />
       <Manifesto />
       <Team />
-      <Clients onShowAll={() => setClientsModalOpen(true)} />
+      <Clients onShowAll={onShowAllClients} />
       <Blog />
       <Contact />
       <Footer />
+    </div>
+  );
+}
+
+export default function Home() {
+  const [loaded, setLoaded] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [clientsModalOpen, setClientsModalOpen] = useState(false);
+  // null = ilk SSR/static HTML anı (CSS media query doğru kabuğu anında gösterir);
+  // mount sonrasında yalnızca aktif cihaz ağacı bellekte tutulur.
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 820px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  return (
+    <>
+      {!loaded && <Loader onDone={() => setLoaded(true)} />}
+
+      {(isMobile === null || isMobile === false) && (
+        <DesktopHome
+          onContactClick={() => setContactOpen(true)}
+          onShowAllClients={() => setClientsModalOpen(true)}
+        />
+      )}
+
+      {(isMobile === null || isMobile === true) && (
+        <div className="mobile-shell">
+          <MobileHome
+            onContactClick={() => setContactOpen(true)}
+            onShowAllClients={() => setClientsModalOpen(true)}
+          />
+        </div>
+      )}
+
       <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
-      <ClientsModal open={clientsModalOpen} onClose={() => setClientsModalOpen(false)} />
+      <ClientsModal
+        open={clientsModalOpen}
+        onClose={() => setClientsModalOpen(false)}
+      />
     </>
   );
 }

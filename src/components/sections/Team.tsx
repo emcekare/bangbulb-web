@@ -1,7 +1,7 @@
-const team = [
-  { role: "Kreatif direktör", name: "Evren Akşahin", q: "Sabah kahvesi olmadan slogan yazmaz.", image: "evren.png" },
-  { role: "Art direktör", name: "Anıl Birsin.", q: "Mood board'u 47 kez değiştirir, bir kez gönderir.", image: "anil.png" },
-  { role: "Sosyal Medya Direktörü", name: "Niran Birsin", q: "Algoritmayı düşmanı sayıp sonra arkadaş eder.", image: "niran.png" },
+export const teamMembers = [
+  { role: "Kreatif direktör", name: "Evren Akşahin", q: "Sabah kahvesi olmadan slogan yazmaz.", image: "evren.webp" },
+  { role: "Art direktör", name: "Anıl Birsin.", q: "Mood board'u 47 kez değiştirir, bir kez gönderir.", image: "anil.webp" },
+  { role: "Sosyal Medya Direktörü", name: "Niran Birsin", q: "Algoritmayı düşmanı sayıp sonra arkadaş eder.", image: "niran.webp" },
   { role: "S.M. yöneticisi", name: "Berk T.", q: "DM kutusunu hiç boş bırakmaz." },
   { role: "Grafik tasarımcı", name: "Selin C.", q: "Pixel-perfect ya da hiç." },
   { role: "Grafik tasarımcı", name: "Mert C.", q: "Tipografiyi 'insan gibi' konuşturur." },
@@ -9,7 +9,9 @@ const team = [
   { role: "Kurgu operatörü", name: "Onur P.", q: "Cut'ları matematiksel duyar." },
 ];
 
-const initials = (n: string) =>
+const team = teamMembers;
+
+export const initials = (n: string) =>
   n
     .split(/\s|\./)
     .filter(Boolean)
@@ -45,10 +47,11 @@ export default function Team() {
             <div className="member" key={i} data-cursor="merhaba">
               <div className="member__avatar" data-init={!m.image ? initials(m.name) : ""}>
                 {m.image && (
-                  <Image 
+                  <Image
                     src={getAssetPath(`/assets/team/${m.image}`)}
                     alt={m.name}
                     fill
+                    sizes="(max-width: 540px) 100vw, (max-width: 900px) 50vw, 25vw"
                     style={{ objectFit: "cover" }}
                     className="member__photo"
                   />

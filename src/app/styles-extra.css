@@ -446,13 +446,10 @@ body { background: var(--scroll-bg, var(--bg)); transition: background 0.1s line
   font-family: var(--font-sans);
 }
 
+/* Bal kavanozu (honeypot). Web3Forms `botcheck` alanının display:none
+   olmasını şart koşuyor — ekran dışına almak yeterli değil. */
 .cform__hp {
-  position: absolute;
-  left: -5000px;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
+  display: none !important;
 }
 
 .cform__error {
@@ -564,6 +561,9 @@ body { background: var(--scroll-bg, var(--bg)); transition: background 0.1s line
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-top: 40px;
+  /* <ul> olarak işaretlendi (ekran okuyucu "8 öğeli liste" desin) */
+  list-style: none;
+  padding: 0;
 }
 .client-modal__item {
   aspect-ratio: 4/3;

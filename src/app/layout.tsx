@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./styles.css";
 import "./styles-extra.css";
+import "./mobile.css";
 
 export const metadata: Metadata = {
   title: "BangBulb — reklam ajansı",

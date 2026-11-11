@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-const steps = [
+export const processSteps = [
   {
     i: 0,
     tag: "AYIN SON HAFTASI",
@@ -31,6 +31,8 @@ const steps = [
     when: "Sözleşme süresince",
   },
 ];
+
+const steps = processSteps;
 
 export default function Process() {
   return (

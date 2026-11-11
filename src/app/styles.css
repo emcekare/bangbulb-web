@@ -1058,6 +1058,9 @@ button {
 }
 .blog__list {
   border-top: 1px solid var(--line);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 .post {
   display: grid;
@@ -1068,7 +1071,20 @@ button {
   border-bottom: 1px solid var(--line);
   transition: padding 0.4s var(--easing);
 }
+.footer__social {
+  display: flex;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer__social-pending { opacity: 0.45; }
+
 .post:hover { padding-left: 24px; }
+/* Henüz adresi olmayan yazı: hover/ok göstergesi yok, tıklanabilir görünmez */
+.post--pending:hover { padding-left: 0; }
+.post--pending:hover .post__title { color: inherit; }
+.post--pending .post__arrow { opacity: 0.25; }
 .post__date {
   font-family: var(--font-mono);
   font-size: 10px;
