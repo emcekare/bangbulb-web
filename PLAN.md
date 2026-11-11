@@ -17,7 +17,8 @@ Durum sütunu: ✅ bitti, 🟡 kısmen, ⏳ bekliyor, 🔒 dış bağımlılık.
 | 1.1, 1.2 | 🔒 | Gerçek iş görselleri ajanstan bekleniyor. Veri dosyası hazır (`src/content/works.ts`) |
 | 1.3 | 🟡 | Yazım hatası düzeltildi. 5 fotoğraf ve gerçek isimler bekleniyor |
 | 1.4 | ✅ | Blog kaldırıldı |
-| 1.5 – 1.9 | 🔒 | Ajans kararı ve teyidi bekliyor |
+| 1.5 | 🟡 | Instagram, LinkedIn, YouTube girildi. Ajans Behance profili vermedi, etiket kaldırıldı. `archiveUrl` boş, bağlantı gizli |
+| 1.6 – 1.9 | 🔒 | Ajans kararı ve teyidi bekliyor |
 | 2.1 | 🟡 | Alt yol `NEXT_PUBLIC_BASE_PATH` ile ayarlanabilir (kök için `/`). Alan adı ve CNAME bekliyor |
 | 2.2 | 🔒 | Web3Forms anahtarı |
 | 2.3 | 🔒 | KVKK metni ve hukuki onay |
@@ -64,7 +65,7 @@ Açık riskler:
 
 ## 2. Yayın kararı
 
-Bugünkü haliyle yayına uygun değil. Engel tasarım değil, içerik: 7 işten 6'sı, 5 blog yazısının 5'i, 8 ekip üyesinden 5'i ve 4 sosyal medya bağlantısının 4'ü yer tutucu. Faz 0 ve Faz 1 bitmeden alan adına bağlanmamalı.
+Bugünkü haliyle yayına uygun değil. Engel tasarım değil, içerik: 7 işten 6'sı, 5 blog yazısının 5'i, 8 ekip üyesinden 5'i ve sosyal medya bağlantıları yer tutucu (1.5 ile girildi). Faz 0 ve Faz 1 bitmeden alan adına bağlanmamalı.
 
 ## 3. Fazlar
 

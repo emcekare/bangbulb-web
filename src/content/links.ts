@@ -13,10 +13,12 @@ export type ExternalLink = {
 };
 
 export const socialLinks: ExternalLink[] = [
-  { label: "Instagram", url: "" },
-  { label: "LinkedIn", url: "" },
-  { label: "Behance", url: "" },
-  { label: "YouTube", url: "" },
+  { label: "Instagram", url: "https://www.instagram.com/bangbulbajans/" },
+  {
+    label: "LinkedIn",
+    url: "https://www.linkedin.com/company/bangbulb-reklam-ajans%C4%B1/",
+  },
+  { label: "YouTube", url: "https://www.youtube.com/@bangbulbajans7039" },
 ];
 
 /** Works bölümündeki "arşivi aç" bağlantısı — ör. Behance profili. */
