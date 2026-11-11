@@ -18,8 +18,9 @@ export const socialLinks: ExternalLink[] = [
     label: "LinkedIn",
     url: "https://www.linkedin.com/company/bangbulb-reklam-ajans%C4%B1/",
   },
+  { label: "Behance", url: "https://www.behance.net/bangbulbajans" },
   { label: "YouTube", url: "https://www.youtube.com/@bangbulbajans7039" },
 ];
 
 /** Works bölümündeki "arşivi aç" bağlantısı — ör. Behance profili. */
-export const archiveUrl: string = "";
+export const archiveUrl: string = "https://www.behance.net/bangbulbajans";

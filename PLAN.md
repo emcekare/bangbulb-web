@@ -17,7 +17,7 @@ Durum sütunu: ✅ bitti, 🟡 kısmen, ⏳ bekliyor, 🔒 dış bağımlılık.
 | 1.1, 1.2 | 🔒 | Gerçek iş görselleri ajanstan bekleniyor. Veri dosyası hazır (`src/content/works.ts`) |
 | 1.3 | 🟡 | Yazım hatası düzeltildi. 5 fotoğraf ve gerçek isimler bekleniyor |
 | 1.4 | ✅ | Blog kaldırıldı |
-| 1.5 | 🟡 | Instagram, LinkedIn, YouTube girildi. Ajans Behance profili vermedi, etiket kaldırıldı. `archiveUrl` boş, bağlantı gizli |
+| 1.5 | ✅ | Instagram, LinkedIn, Behance, YouTube girildi. `archiveUrl` Behance profili |
 | 1.6 – 1.9 | 🔒 | Ajans kararı ve teyidi bekliyor |
 | 2.1 | 🟡 | Alt yol `NEXT_PUBLIC_BASE_PATH` ile ayarlanabilir (kök için `/`). Alan adı ve CNAME bekliyor |
 | 2.2 | 🔒 | Web3Forms anahtarı |
