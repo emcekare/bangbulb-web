@@ -11,7 +11,7 @@ Durum sütunu: ✅ bitti, 🟡 kısmen, ⏳ bekliyor, 🔒 dış bağımlılık.
 
 | No | Durum | Not |
 |---|---|---|
-| 0.1 | 🟡 | Tüm değişiklikler commit edildi. Push bekliyor (kimlik bilgisi yalnızca sizde) |
+| 0.1 | ✅ | Tüm değişiklikler commit edildi ve push edildi |
 | 0.2 | ⏳ | Depo hâlâ OneDrive içinde |
 | 0.3 | ✅ | PLAN.md, README.md |
 | 1.1, 1.2 | 🔒 | Gerçek iş görselleri ajanstan bekleniyor. Veri dosyası hazır (`src/content/works.ts`) |
@@ -60,7 +60,7 @@ Biten işler:
 
 Açık riskler:
 
-- Yerel `master`, `origin/master`'ın 1 commit önünde. Üstüne 48 dosyalık commit edilmemiş değişiklik var. Mobil sürümün tamamı (`src/components/mobile/`, `mobile.css`) git'te hiç yok. Yayındaki site 8 Mayıs sürümü.
+- ~~Yerel `master`, `origin/master`'ın 1 commit önünde. Üstüne 48 dosyalık commit edilmemiş değişiklik var. Mobil sürümün tamamı (`src/components/mobile/`, `mobile.css`) git'te hiç yok. Yayındaki site 8 Mayıs sürümü.~~ Giderildi (0.1).
 - Depo OneDrive klasöründe. `node_modules` ve `.git` senkronu dosya bozulması riski taşıyor.
 
 ## 2. Yayın kararı
