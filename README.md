@@ -28,8 +28,9 @@ Node 22 önerilir (CI aynı sürümü kullanıyor).
 `.env.example` dosyasında açıklamalarıyla duruyor. Hepsi `NEXT_PUBLIC_` önekli, build sırasında bundle'a gömülür.
 
 - `NEXT_PUBLIC_WEB3FORMS_KEY`: iletişim formu. Boşsa form ziyaretçinin mail uygulamasını açar.
-- `NEXT_PUBLIC_UMAMI_SRC`, `NEXT_PUBLIC_UMAMI_WEBSITE_ID`: analytics. Henüz koda bağlı değil (PLAN 2.5).
-- `NEXT_PUBLIC_SITE_URL`: canonical ve OG için. Henüz koda bağlı değil (PLAN 2.4).
+- `NEXT_PUBLIC_UMAMI_SRC`, `NEXT_PUBLIC_UMAMI_WEBSITE_ID`: analytics. İkisinden biri boşsa hiçbir şey yüklenmez.
+- `NEXT_PUBLIC_SITE_URL`: canonical, OG ve sitemap için. Varsayılan `https://bangbulb.com`.
+- `NEXT_PUBLIC_BASE_PATH`: yayın alt yolu. Tanımsızsa production'da `/bangbulb-web`. Alan adı kökü için boş değer verin.
 
 ## Yapı
 
@@ -37,16 +38,16 @@ Node 22 önerilir (CI aynı sürümü kullanıyor).
 src/app/            layout, sayfa, CSS (styles, styles-extra, mobile)
 src/components/     masaüstü bölümleri (sections/), efektler, modallar
 src/components/mobile/MobileHome.tsx   mobil ağaç (820 px ve altı)
-src/content/        dış bağlantılar
+src/content/        tüm içerik verisi (hizmetler, işler, ekip, müşteriler, süreç, iletişim, bağlantılar)
 src/hooks/          useReveal, useModalA11y
 public/assets/      logolar, ekip fotoğrafları, video
 ```
 
-Masaüstü ve mobil iki ayrı bileşen ağacıdır. Bölüm verileri (hizmetler, işler, ekip, müşteriler) şimdilik `sections/*.tsx` dosyalarından export ediliyor ve iki ağaç da oradan okuyor.
+Masaüstü ve mobil iki ayrı bileşen ağacıdır. İkisi de veriyi `src/content/` altından okur. Yeni iş, ekip üyesi ya da müşteri eklemek için yalnızca oradaki dosyayı düzenleyin.
 
 ## Deploy
 
-`master` dalına push, `.github/workflows/deploy.yml` ile GitHub Pages'e yayınlar. Production build `/bangbulb-web` alt yolunda çalışır (`next.config.ts` içindeki `basePath`). Alan adına geçişte bu kalkacak (PLAN 2.1).
+`master` dalına push, `.github/workflows/deploy.yml` ile GitHub Pages'e yayınlar. Production build varsayılan olarak `/bangbulb-web` alt yolunda çalışır. Alan adına geçişte `NEXT_PUBLIC_BASE_PATH` repo değişkenini boş değerle tanımlayın ve `public/CNAME` ekleyin (PLAN 2.1).
 
 ## Dikkat
 

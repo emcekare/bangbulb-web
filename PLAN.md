@@ -1,9 +1,47 @@
 # BangBulb Web: Proje Planı
 
-Son güncelleme: 11 Kasım 2026
+Son güncelleme: 11 Kasım 2026 (Faz 0, 2, 3, 4 turu sonrası)
 Kaynak: 11 Kasım 2026 kod ve ekran incelemesi (masaüstü 1440, tablet 834/1024, mobil 390/360)
 
 > Not: Depoda, Project'te ve Drive'da yazılı bir plan bulunamadı. Eski plandan kalan tek iz `e2e/a11y-keyboard.mjs` içindeki "#15" atfı. Bu belge, kodun bugünkü durumundan yeniden kurulmuş güncel plandır. Eski numaralar elinizdeyse karşılıkları son bölümdeki tabloya işlenmeli.
+
+## 0. Durum (11 Kasım 2026 akşamı)
+
+Durum sütunu: ✅ bitti, 🟡 kısmen, ⏳ bekliyor, 🔒 dış bağımlılık.
+
+| No | Durum | Not |
+|---|---|---|
+| 0.1 | 🟡 | Tüm değişiklikler commit edildi. Push bekliyor (kimlik bilgisi yalnızca sizde) |
+| 0.2 | ⏳ | Depo hâlâ OneDrive içinde |
+| 0.3 | ✅ | PLAN.md, README.md |
+| 1.1, 1.2 | 🔒 | Gerçek iş görselleri ajanstan bekleniyor. Veri dosyası hazır (`src/content/works.ts`) |
+| 1.3 | 🟡 | Yazım hatası düzeltildi. 5 fotoğraf ve gerçek isimler bekleniyor |
+| 1.4 | ✅ | Blog kaldırıldı |
+| 1.5 – 1.9 | 🔒 | Ajans kararı ve teyidi bekliyor |
+| 2.1 | 🟡 | Alt yol `NEXT_PUBLIC_BASE_PATH` ile ayarlanabilir. Alan adı ve CNAME bekliyor |
+| 2.2 | 🔒 | Web3Forms anahtarı |
+| 2.3 | 🔒 | KVKK metni ve hukuki onay |
+| 2.4 | ✅ | metadata, canonical, OG görseli, sitemap, robots, JSON-LD |
+| 2.5 | 🟡 | Kod hazır, env boşken hiçbir şey yüklenmiyor. Gerçek Umami hesabıyla denenmedi |
+| 2.6 | ✅ | Markalı 404 |
+| 3.1 | ✅ | İçerik 0,9 sn'de görünür (ölçüm), tekrar ziyarette loader yok, JS kapalıyken içerik okunuyor |
+| 3.2 | ✅ | Hero tek ekran, lede ve CTA ilk ekranda. 1440'ta alt üçte bir boş, cilalanabilir |
+| 3.3, 3.4, 3.6 | ✅ | 3 grup, açılır satırlar, yer tutucu önizleme kaldırıldı |
+| 3.5 | ✅ | Logolar varsayılan görünür (krem karo) |
+| 3.7, 3.8, 3.9 | ✅ | Hareket azaltma, odak halkası, içeriğe atla, rAF döngüleri |
+| 3.10, 3.11 | ✅ | Nav, süs etiketleri, galeri mesafesi 3000 px (kart başına 300) |
+| 4.1 | 🟡 | Bağlantısız kartlar tıklanabilir görünmüyor. Görseller 1.1'e bağlı |
+| 4.2 – 4.7 | ✅ | Güven satırı, Niye biz, 44 px hedefler, akordeon, ipucu, e-posta tek satır |
+| 4.8 | ⏳ | Sabit alt bar. WhatsApp numarası teyidi gerekli |
+| 5.1, 5.2, 5.3 | ⏳ | Mimari hat (üst model), bu turun onayından sonra |
+| 5.4 | ✅ | next/font |
+| 5.5 | 🟡 | Ölü medya sorguları ve blog CSS'i temizlendi. Satır içi stiller ve eski `.cursor*`, `.work*` kuralları duruyor |
+| 5.6 | ✅ | `src/content/` altında 7 veri dosyası |
+| 5.7 | ⏳ | Playwright test formatı |
+
+Bu turda yeni yazılan metinler (ajans onayı ister): masaüstü hero cümlesi "BangBulb, markaların fikrini kreatiften medyaya tek elden yürüten, sekiz kişilik bir reklam ajansı.", mobil "Niye biz?" cümlesi, hizmet grup adları (Kreatif & Marka, Mecra & İtibar, Dijital Performans), "Vitrin. Sıkıcı kısmı atladık.", 404 metni "Bu oda boş."
+
+Geri dönüş noktası: `pre-faz-2-4` etiketi bu turdan önceki hali gösterir.
 
 ## 1. Mevcut durum
 
