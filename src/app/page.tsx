@@ -21,7 +21,7 @@ import ClientsModal from "@/components/ClientsModal";
 import MobileHome from "@/components/mobile/MobileHome";
 
 const INTRO_KEY = "bb-intro-seen";
-const PRE_LOADER_SCRIPT = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("${INTRO_KEY}"))document.documentElement.classList.add("is-loading")}catch(e){}`;
+const PRE_LOADER_SCRIPT = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("${INTRO_KEY}")){document.documentElement.classList.add("is-loading");setTimeout(function(){document.documentElement.classList.remove("is-loading")},3000)}}catch(e){}`;
 
 function DesktopHome({
   onContactClick,
