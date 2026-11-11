@@ -1,31 +1,72 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getAssetPath } from "@/lib/asset";
+import { useModalA11y } from "@/hooks/useModalA11y";
+import { archiveUrl } from "@/content/links";
 
-const works = [
+export type Work = {
+  id: string;
+  title: string;
+  cat: string;
+  year: string;
+  layout: string;
+  link?: string;
+  video?: string;
+  poster?: string;
+};
+
+export const works: Work[] = [
   { id: "a", title: "Quasar Lansman", cat: "KAMPANYA / FILM", year: "2025", layout: "a" },
   { id: "b", title: "Offis Mekan", cat: "SOSYAL MEDYA", year: "2025", layout: "b" },
-  { id: "c", title: "La Liberté", cat: "AMBALAJ", year: "2024", layout: "c", link: "https://www.behance.net/gallery/145736391/LaLibert-Coffee-Packaging-design", video: "/assets/videos/la-liberte.mp4" },
+  { id: "c", title: "La Liberté", cat: "AMBALAJ", year: "2024", layout: "c", link: "https://www.behance.net/gallery/145736391/LaLibert-Coffee-Packaging-design", video: "/assets/videos/la-liberte.mp4", poster: "/assets/videos/la-liberte-poster.webp" },
   { id: "d", title: "Saatçi Co.", cat: "KIMLIK", year: "2024", layout: "d" },
   { id: "e", title: "Lale Sokağı", cat: "TVC", year: "2024", layout: "e" },
   { id: "f", title: "Mira Skincare", cat: "META PERFORMANCE", year: "2025", layout: "f" },
   { id: "g", title: "Kahve & Co.", cat: "AÇIK HAVA", year: "2025", layout: "g" },
 ];
 
+/**
+ * Behance galeri URL'inden embed adresi üretir.
+ * `split('/')[4]` kırılgandı — URL yapısı değişince sessizce bozuluyordu.
+ */
+export function behanceEmbedSrc(link: string): string {
+  const match = link.match(/behance\.net\/gallery\/(\d+)/);
+  return match
+    ? `https://www.behance.net/embed/project/${match[1]}?tracking_source=project_controls`
+    : link;
+}
+
 export default function Works() {
   const pinRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const modalPanelRef = useRef<HTMLDivElement>(null);
   const [modalLink, setModalLink] = useState<string | null>(null);
 
-  // ESC tuşu ile modalı kapatma
+  const closeModal = useCallback(() => setModalLink(null), []);
+
+  // Escape, scroll kilidi, focus tuzağı ve focus geri verme
+  useModalA11y(modalLink !== null, closeModal, modalPanelRef);
+
+  // Video yalnızca görünürken oynasın. preload="none" ile birleşince
+  // kart ekrana girene kadar tek bayt indirilmiyor.
   useEffect(() => {
-    if (!modalLink) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setModalLink(null);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [modalLink]);
+    const v = videoRef.current;
+    if (!v) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0]?.isIntersecting ?? false;
+        if (visible) {
+          void v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const pin = pinRef.current;
@@ -99,9 +140,26 @@ export default function Works() {
               <article
                 key={w.id}
                 className="hwork"
-                data-cursor="İNCELE"
-                onClick={() => w.link && setModalLink(w.link)}
-                style={w.link ? { cursor: 'pointer' } : undefined}
+                // "İNCELE" imleci yalnızca gerçekten açılacak bir iş varsa
+                // görünsün; diğer kartlarda tıklama vaadi veriyordu.
+                // Link varsa kart bir butondur: klavyeyle odaklanılır,
+                // Enter/Space ile açılır.
+                {...(w.link
+                  ? {
+                      "data-cursor": "İNCELE",
+                      role: "button",
+                      tabIndex: 0,
+                      "aria-label": `${w.title} — ${w.cat} işini incele`,
+                      onClick: () => setModalLink(w.link!),
+                      onKeyDown: (e: React.KeyboardEvent) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setModalLink(w.link!);
+                        }
+                      },
+                      style: { cursor: "pointer" },
+                    }
+                  : {})}
               >
                 <div className="hwork__index mono">
                   / {String(i + 1).padStart(2, "0")} — {String(works.length).padStart(2, "0")}
@@ -110,11 +168,14 @@ export default function Works() {
                   {w.video && (
                     <>
                       <video
+                        ref={videoRef}
                         src={getAssetPath(w.video)}
-                        autoPlay
+                        poster={w.poster ? getAssetPath(w.poster) : undefined}
                         loop
                         muted
                         playsInline
+                        preload="none"
+                        aria-hidden="true"
                         style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 0 }}></div>
@@ -142,14 +203,19 @@ export default function Works() {
                     gör
                   </span>
                 </div>
-                <a
-                  className="nav__cta"
-                  data-cursor="hepsi"
-                  style={{ marginTop: 24 }}
-                >
-                  <span className="nav__cta-dot"></span>
-                  arşivi aç
-                </a>
+                {archiveUrl && (
+                  <a
+                    className="nav__cta"
+                    data-cursor="hepsi"
+                    href={archiveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginTop: 24 }}
+                  >
+                    <span className="nav__cta-dot"></span>
+                    arşivi aç
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -169,13 +235,16 @@ export default function Works() {
       {modalLink && (
         <div
           onWheel={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label="İş önizlemesi"
           style={{
             position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
             backgroundColor: 'rgba(0,0,0,0.8)', padding: '2rem'
           }}
         >
           <div style={{ position: 'absolute', inset: 0 }} onClick={() => setModalLink(null)} />
-          <div style={{
+          <div ref={modalPanelRef} style={{
             position: 'relative', width: '100%', maxWidth: '1200px', height: '85vh',
             backgroundColor: '#1a1a1a', borderRadius: '12px', overflow: 'hidden',
             display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
@@ -190,6 +259,19 @@ export default function Works() {
               }}>
                 {modalLink}
               </div>
+              {/* iframe sekme sırasının dışında olduğu için gerçek erişim
+                  yolu bu link: klavye kullanıcısı işi Behance'te açabilir. */}
+              <a
+                href={modalLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: '#aaa', fontSize: '12px', textDecoration: 'underline',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Behance&apos;te aç ↗
+              </a>
               <button
                 onClick={() => setModalLink(null)}
                 aria-label="Kapat"
@@ -207,10 +289,15 @@ export default function Works() {
             </div>
             <div style={{ flex: 1, backgroundColor: '#fff' }}>
               <iframe
-                src={modalLink.includes('behance.net/gallery/') ? `https://www.behance.net/embed/project/${modalLink.split('/')[4]}?tracking_source=project_controls` : modalLink}
+                src={behanceEmbedSrc(modalLink)}
+                title="İş önizlemesi"
+                loading="lazy"
+                // Sekme sırasının dışında: cross-origin iframe'in içine giren
+                // focus Escape'i yutuyor ve klavye tuzağı oluşturuyordu
+                // (WCAG 2.1.2). Klavye erişimi üstteki "Behance'te aç" linki.
+                tabIndex={-1}
                 style={{ width: '100%', height: '100%', border: 'none' }}
                 allow="fullscreen"
-                scrolling="yes"
               />
             </div>
           </div>

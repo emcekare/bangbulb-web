@@ -31,6 +31,13 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # NEXT_PUBLIC_* değişkenleri build sırasında bundle'a gömülür.
+          # Repo → Settings → Secrets and variables → Actions altında tanımlayın.
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY }}
+          NEXT_PUBLIC_UMAMI_SRC: ${{ vars.NEXT_PUBLIC_UMAMI_SRC }}
+          NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
 
       - name: Add .nojekyll
         run: touch out/.nojekyll

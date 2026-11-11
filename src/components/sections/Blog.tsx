@@ -1,4 +1,12 @@
-const posts = [
+export type Post = {
+  date: string;
+  cat: string;
+  title: [string, string, string];
+  /** Yazının adresi. Tanımlanana kadar kart tıklanabilir görünmez. */
+  url?: string;
+};
+
+export const blogPosts: Post[] = [
   {
     date: "29.04.2026",
     cat: "INSIGHT",
@@ -26,6 +34,8 @@ const posts = [
   },
 ];
 
+const posts = blogPosts;
+
 export default function Blog() {
   return (
     <section className="section blog" id="blog">
@@ -46,21 +56,39 @@ export default function Blog() {
           </div>
         </div>
 
-        <div className="blog__list reveal">
-          {posts.map((p, i) => (
-            <a className="post" key={i} data-cursor="oku">
-              <span className="post__date">{p.date}</span>
-              <span className="post__category">{p.cat}</span>
-              <span className="post__title display">
-                {p.title[0]}
-                <span className="ital">{p.title[1]}</span>
-                {p.title[2]}
-              </span>
-              <span></span>
-              <span className="post__arrow">→</span>
-            </a>
-          ))}
-        </div>
+        <ul className="blog__list reveal">
+          {posts.map((p, i) => {
+            const body = (
+              <>
+                <span className="post__date">{p.date}</span>
+                <span className="post__category">{p.cat}</span>
+                <span className="post__title display">
+                  {p.title[0]}
+                  <span className="ital">{p.title[1]}</span>
+                  {p.title[2]}
+                </span>
+                <span></span>
+                <span className="post__arrow" aria-hidden="true">
+                  →
+                </span>
+              </>
+            );
+
+            return (
+              <li key={i}>
+                {p.url ? (
+                  <a className="post" href={p.url} data-cursor="oku">
+                    {body}
+                  </a>
+                ) : (
+                  // Adresi olmayan yazı tıklanabilir gibi görünmemeli:
+                  // href'siz <a> klavyeyle odaklanılamaz ve hiçbir şey yapmaz.
+                  <div className="post post--pending">{body}</div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

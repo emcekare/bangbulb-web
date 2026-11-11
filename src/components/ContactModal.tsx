@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useModalA11y } from "@/hooks/useModalA11y";
 
 interface ContactModalProps {
   open: boolean;
@@ -8,38 +9,51 @@ interface ContactModalProps {
 
 type Status = "idle" | "sending" | "ok" | "error";
 
-// İsteğe bağlı form endpoint'i. .env.local içine NEXT_PUBLIC_CONTACT_ENDPOINT
-// olarak Formspree (https://formspree.io/f/XXXX) veya Web3Forms URL'i yaz.
-// Tanımlı değilse form, ziyaretçinin mail uygulamasını alanları önceden
-// doldurarak açmaya geri düşer.
-const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || "";
+// Web3Forms erişim anahtarı. web3forms.com üzerinden e-posta adresiyle
+// ücretsiz alınır ve .env.local içine NEXT_PUBLIC_WEB3FORMS_KEY olarak yazılır.
+// Anahtar tanımlı değilse form, ziyaretçinin mail uygulamasını alanları
+// önceden doldurarak açmaya geri düşer.
+const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "";
+const ENDPOINT = "https://api.web3forms.com/submit";
 const FALLBACK_EMAIL = "bangbulb@gmail.com";
+
+// API hem { message } hem { body: { message } } döndürebiliyor (429 vs 400).
+type Web3FormsResponse = {
+  success?: boolean;
+  message?: string;
+  body?: { message?: string };
+};
+
+function errorText(res: Response, json: Web3FormsResponse | null): string {
+  if (res.status === 429) {
+    return "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin.";
+  }
+  if (res.status >= 500) {
+    return "Sunucu şu an yanıt vermiyor. Az sonra tekrar deneyin.";
+  }
+  return (
+    json?.message ||
+    json?.body?.message ||
+    "Mesaj gönderilemedi. İnternet bağlantınızı kontrol edin."
+  );
+}
 
 export default function ContactModal({ open, onClose }: ContactModalProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [open, onClose]);
+  // Kapanışta state'i sıfırla — tekrar açılışta temiz başlasın. Bunu bir
+  // effect yerine kapatma yolunda yapıyoruz; effect içinde setState zincirleme
+  // render'a yol açıyor.
+  const handleClose = useCallback(() => {
+    setStatus("idle");
+    setErrorMsg("");
+    onClose();
+  }, [onClose]);
 
-  // Modal kapandığında state'i sıfırla — tekrar açılışta temiz başlasın.
-  useEffect(() => {
-    if (!open) {
-      setStatus("idle");
-      setErrorMsg("");
-    }
-  }, [open]);
+  // Escape, scroll kilidi, focus tuzağı ve focus geri verme
+  useModalA11y(open, handleClose, panelRef);
 
   if (!open) return null;
 
@@ -49,14 +63,16 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
     const data = new FormData(form);
 
     // Bal kavanozu — botlar her alanı doldurur; insanlar bu alanı görmez.
-    if ((data.get("_gotcha") as string)?.length) {
+    // Web3Forms sunucu tarafında da kontrol ediyor, bu erken çıkış sadece
+    // gereksiz istek atmamak için.
+    if ((data.get("botcheck") as string)?.length) {
       setStatus("ok");
       return;
     }
 
     setStatus("sending");
 
-    if (!ENDPOINT) {
+    if (!ACCESS_KEY) {
       // Backend ayarlanmamış → kullanıcının mail uygulamasını aç.
       const subject = "BangBulb · İletişim formu";
       const body =
@@ -73,19 +89,34 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
     }
 
     try {
+      const payload = Object.fromEntries(data.entries());
       const res = await fetch(ENDPOINT, {
         method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ ...payload, access_key: ACCESS_KEY }),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
+
+      const json: Web3FormsResponse | null = await res
+        .json()
+        .catch(() => null);
+
+      // 200 dönse bile success:false olabiliyor — ikisini de kontrol et.
+      if (!res.ok || json?.success !== true) {
+        setErrorMsg(errorText(res, json));
+        setStatus("error");
+        return;
       }
+
       form.reset();
       setStatus("ok");
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Gönderilemedi");
+    } catch {
+      // Ağ hatası — fetch reddedildi, HTTP yanıtı hiç gelmedi.
+      setErrorMsg(
+        "Bağlantı kurulamadı. İnternetinizi kontrol edip tekrar deneyin."
+      );
       setStatus("error");
     }
   };
@@ -97,13 +128,13 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
       aria-modal="true"
       aria-labelledby="cmodal-title"
     >
-      <div className="cmodal__backdrop" onClick={onClose} />
-      <div className="cmodal__panel">
+      <div className="cmodal__backdrop" onClick={handleClose} />
+      <div className="cmodal__panel" ref={panelRef}>
         <button
           type="button"
           className="cmodal__close"
           aria-label="Kapat"
-          onClick={onClose}
+          onClick={handleClose}
         >
           ×
         </button>
@@ -123,14 +154,14 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
             <div className="cmodal__success-mark">✓</div>
             <h3 className="display">Aldık!</h3>
             <p>
-              {ENDPOINT
+              {ACCESS_KEY
                 ? "En kısa sürede dönüş yapacağız."
                 : "Mail uygulamanız açıldı — gönder tuşuna basmayı unutmayın."}
             </p>
             <button
               type="button"
               className="nav__cta cmodal__close-cta"
-              onClick={onClose}
+              onClick={handleClose}
             >
               Kapat
             </button>
@@ -176,18 +207,25 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
               />
             </label>
 
-            {/* Bal kavanozu alanı; .cform__hp sınıfı ile ekran dışına alınmış */}
+            {/* Web3Forms bal kavanozu; .cform__hp ile display:none */}
             <input
-              type="text"
-              name="_gotcha"
+              type="checkbox"
+              name="botcheck"
               tabIndex={-1}
               autoComplete="off"
               aria-hidden="true"
               className="cform__hp"
             />
 
-            {/* Formspree benzeri servisler için konu satırı */}
-            <input type="hidden" name="_subject" value="BangBulb iletişim formu" />
+            {/* Web3Forms'un e-posta konu satırı olarak kullandığı alan */}
+            <input
+              type="hidden"
+              name="subject"
+              value="BangBulb · yeni iletişim formu"
+            />
+
+            {/* Gelen mailde gönderen adı; varsayılanı "Notifications" */}
+            <input type="hidden" name="from_name" value="BangBulb Web" />
 
             {status === "error" && (
               <div className="cform__error">⚠ {errorMsg}</div>
@@ -203,7 +241,7 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
             </button>
 
             <p className="cform__note">
-              Mesajınız {ENDPOINT ? "doğrudan ekibimize" : `${FALLBACK_EMAIL} adresine`} iletilir.
+              Mesajınız {ACCESS_KEY ? "doğrudan ekibimize" : `${FALLBACK_EMAIL} adresine`} iletilir.
             </p>
           </form>
         )}
