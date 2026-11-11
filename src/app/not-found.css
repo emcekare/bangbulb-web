@@ -1,0 +1,50 @@
+.nf {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #0c1816;
+  color: #efe7d6;
+}
+.nf-logo {
+  width: 96px;
+  height: auto;
+  margin-bottom: 8px;
+}
+.nf-title {
+  margin: 0;
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-weight: 500;
+  font-size: clamp(48px, 10vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.nf-text {
+  margin: 0;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: clamp(16px, 1.4vw, 20px);
+  color: #cfc6b4;
+}
+.nf-btn {
+  margin-top: 12px;
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: #f5c24a;
+  color: #0c1816;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+}
+.nf-btn:hover,
+.nf-btn:focus-visible {
+  background: #ffd36b;
+  outline: 2px solid #efe7d6;
+  outline-offset: 3px;
+}

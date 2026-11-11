@@ -2,6 +2,16 @@ import type { NextConfig } from "next";
 
 const isProd = process.env.NODE_ENV === "production";
 
+// Alt yol tek kaynaktan gelir: NEXT_PUBLIC_BASE_PATH tanımlıysa (boş string
+// dahil) o kullanılır. Tanımsızsa production "/bangbulb-web", dev "" olur.
+// Çözülen değer aşağıdaki `env` ile tarayıcı koduna da (getAssetPath) aktarılır.
+const basePath =
+  process.env.NEXT_PUBLIC_BASE_PATH !== undefined
+    ? process.env.NEXT_PUBLIC_BASE_PATH
+    : isProd
+      ? "/bangbulb-web"
+      : "";
+
 const nextConfig: NextConfig = {
   output: "export",
 
@@ -14,11 +24,9 @@ const nextConfig: NextConfig = {
     "127.0.0.1",
   ],
 
-  // Only apply the subpath in production builds. Dev runs at `/` so
-  // `localhost:3000/` opens the site directly; production export still
-  // lives under `/bangbulb-web/` for sub-path hosting (e.g. GitHub Pages).
-  basePath: isProd ? "/bangbulb-web" : "",
-  assetPrefix: isProd ? "/bangbulb-web/" : "",
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : "",
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
 
   images: {
     unoptimized: true,
