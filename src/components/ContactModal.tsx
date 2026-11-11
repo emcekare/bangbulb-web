@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useRef, useState } from "react";
 import { useModalA11y } from "@/hooks/useModalA11y";
+import { contact } from "@/content/contact";
 
 interface ContactModalProps {
   open: boolean;
@@ -15,7 +16,7 @@ type Status = "idle" | "sending" | "ok" | "error";
 // önceden doldurarak açmaya geri düşer.
 const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "";
 const ENDPOINT = "https://api.web3forms.com/submit";
-const FALLBACK_EMAIL = "bangbulb@gmail.com";
+const FALLBACK_EMAIL = contact.email;
 
 // API hem { message } hem { body: { message } } döndürebiliyor (429 vs 400).
 type Web3FormsResponse = {

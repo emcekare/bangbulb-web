@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 import Image from "next/image";
-import { allClients } from "./sections/Clients";
+import { allClients } from "@/content/clients";
 import { getAssetPath } from "@/lib/asset";
 import { useModalA11y } from "@/hooks/useModalA11y";
 

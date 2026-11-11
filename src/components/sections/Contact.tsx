@@ -1,9 +1,15 @@
+import { Fragment } from "react";
+import { contact } from "@/content/contact";
+
 export default function Contact() {
+  const [emailUser, emailDomain] = contact.email.split("@");
+  const [secondaryUser, secondaryDomain] = contact.emailSecondary.split("@");
+
   return (
     <section className="section contact" id="iletisim">
       <div className="container">
         <div className="s-head reveal">
-          <div className="s-head__num">— 08 / iletişim</div>
+          <div className="s-head__num">— 07 / iletişim</div>
           <div>
             <h2 className="s-head__title display">
               Bir{" "}
@@ -18,13 +24,13 @@ export default function Contact() {
         <div className="contact__inner reveal">
           <h3 className="contact__big display">
             <span className="ital">yaz:</span>{" "}
-            <a href="mailto:bangbulb@gmail.com" data-cursor="mail at">
-              bangbulb<span className="ital">@</span>gmail.com
+            <a href={`mailto:${contact.email}`} data-cursor="mail at">
+              {emailUser}<span className="ital">@</span>{emailDomain}
             </a>
             <br />
             <span className="ital">ara:</span>{" "}
-            <a href="tel:+905373931611" data-cursor="ara">
-              0 537 393 16 11
+            <a href={`tel:${contact.phone.tel}`} data-cursor="ara">
+              {contact.phone.display}
             </a>
           </h3>
 
@@ -32,27 +38,31 @@ export default function Contact() {
             <div className="detail">
               <div className="detail__label">stüdyo</div>
               <div className="detail__value">
-                Quasar İstanbul — Offis Mekan
-                <br />
-                Fulya Mh., Büyükdere Cd. No:76
-                <br />
-                Şişli / İstanbul
+                {contact.addressLines.map((line, i) => (
+                  <Fragment key={line}>
+                    {i > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
               </div>
             </div>
             <div className="detail">
               <div className="detail__label">ikincil</div>
               <div className="detail__value">
-                info<span style={{ color: "var(--accent)" }}>@</span>
-                bangbulb.com
-                <br />0 552 380 72 02
+                {secondaryUser}<span style={{ color: "var(--accent)" }}>@</span>
+                {secondaryDomain}
+                <br />{contact.phoneSecondary.display}
               </div>
             </div>
             <div className="detail">
               <div className="detail__label">çalışma saatleri</div>
               <div className="detail__value">
-                Pzt — Cum / 09:00 — 19:00
-                <br />
-                Cmt: kahve, sohbet, randevuyla
+                {contact.hours.map((line, i) => (
+                  <Fragment key={line}>
+                    {i > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
               </div>
             </div>
           </div>

@@ -1,38 +1,6 @@
 "use client";
 import React from "react";
-
-export const processSteps = [
-  {
-    i: 0,
-    tag: "AYIN SON HAFTASI",
-    title: "Sunum",
-    body: "Bir sonraki ayın bütün içerikleri (örn: 12 post, 4 reels, 4 story) hazırlanır, size sunulur.",
-    when: "Aralık → Ocak için",
-  },
-  {
-    i: 1,
-    tag: "BİRLİKTE",
-    title: "Toplantı",
-    body: "İçerikler birlikte gözden geçirilir, revizeler not alınır, takvim netleştirilir.",
-    when: "1 saatlik oturum",
-  },
-  {
-    i: 2,
-    tag: "REVİZE & TAKVİM",
-    title: "Yayın",
-    body: "Paylaşım takvimine göre revizeler tamamlanır, içerikler yayına girer.",
-    when: "Haftalık ritim",
-  },
-  {
-    i: 3,
-    tag: "AYIN SONUNDA",
-    title: "Rapor",
-    body: "Geçen ayın istatistik ve durum verileri size iletilir; döngü baştan başlar.",
-    when: "Sözleşme süresince",
-  },
-];
-
-const steps = processSteps;
+import { processSteps } from "@/content/process";
 
 export default function Process() {
   return (
@@ -59,7 +27,7 @@ export default function Process() {
           <div className="process__line">
             <div className="process__line-fill"></div>
           </div>
-          {steps.map((s) => (
+          {processSteps.map((s) => (
             <div
               className="step"
               key={s.i}

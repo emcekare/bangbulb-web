@@ -4,11 +4,12 @@ import Image from "next/image";
 import pinwheelSvg from "../../../public/assets/bangbulb-pinwheel.svg";
 import { getAssetPath } from "@/lib/asset";
 import { useModalA11y } from "@/hooks/useModalA11y";
-import { works, behanceEmbedSrc } from "@/components/sections/Works";
-import { serviceItems } from "@/components/sections/Services";
-import { processSteps } from "@/components/sections/Process";
-import { teamMembers, initials } from "@/components/sections/Team";
-import { mainClients, allClients } from "@/components/sections/Clients";
+import { works, behanceEmbedSrc } from "@/content/works";
+import { serviceItems } from "@/content/services";
+import { processSteps } from "@/content/process";
+import { teamMembers, initials } from "@/content/team";
+import { mainClients, allClients } from "@/content/clients";
+import { contact } from "@/content/contact";
 import { socialLinks } from "@/content/links";
 
 interface MobileHomeProps {
@@ -216,10 +217,10 @@ export default function MobileHome({
               Bize Yaz
             </button>
             <div className="m-drawer__QuickSub">
-              <a href="tel:+905373931611" onClick={closeDrawer}>
+              <a href={`tel:${contact.phone.tel}`} onClick={closeDrawer}>
                 Ara
               </a>
-              <a href="mailto:bangbulb@gmail.com" onClick={closeDrawer}>
+              <a href={`mailto:${contact.email}`} onClick={closeDrawer}>
                 E-posta
               </a>
             </div>
@@ -543,19 +544,17 @@ export default function MobileHome({
           </button>
 
           <div className="m-contact-actions">
-            <a href="tel:+905373931611" className="m-contact-card">
+            <a href={`tel:${contact.phone.tel}`} className="m-contact-card">
               <span className="m-contact-card__label">Telefon</span>
-              <span className="m-contact-card__val">0 537 393 16 11</span>
+              <span className="m-contact-card__val">{contact.phone.display}</span>
             </a>
-            <a href="mailto:bangbulb@gmail.com" className="m-contact-card">
+            <a href={`mailto:${contact.email}`} className="m-contact-card">
               <span className="m-contact-card__label">E-posta</span>
-              <span className="m-contact-card__val">bangbulb@gmail.com</span>
+              <span className="m-contact-card__val">{contact.email}</span>
             </a>
           </div>
 
-          <div className="m-address-line">
-            Quasar İstanbul · Fulya Mh., Büyükdere Cd. No:76, Şişli
-          </div>
+          <div className="m-address-line">{contact.addressShort}</div>
         </section>
 
         {/* FOOTER */}

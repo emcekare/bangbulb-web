@@ -1,29 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-
-export const serviceItems = [
-  { num: "01", name: "Sosyal medya yönetimi", tag: "META · TIKTOK · X", color: "a", desc: "Aylık içerik stratejisi, reels/post üretimi, topluluk ve moderasyon yönetimi." },
-  { num: "02", name: "Kurumsal kimlik tasarımı", tag: "BRAND SYSTEM", color: "b", desc: "Logo ailesi, tipografi, renk sistemi ve tüm temas noktaları için marka rehberi." },
-  { num: "03", name: "Ambalaj & stant tasarımı", tag: "3D · PRINT", color: "c", desc: "Rafta ilk bakışta ayrışan ambalaj, kutu, etiket ve satış noktası stant tasarımları." },
-  { num: "04", name: "Prodüksiyon hizmeti", tag: "FILM · FOTO", color: "d", desc: "Konseptten kurguya reklam filmi, ürün çekimi, mekan ve sosyal medya video prodüksiyonu." },
-  { num: "05", name: "TV reklamları", tag: "BROADCAST", color: "e", desc: "Ulusal ve tematik kanallar için senaryo, prodüksiyon ve medya planlama süreçleri." },
-  { num: "06", name: "Açık hava reklamları", tag: "OOH · DOOH", color: "f", desc: "Billboard, megalight, dijital ekranlar ve transit mecralar için dikkat çekici kampanyalar." },
-  { num: "07", name: "META reklamları", tag: "PERFORMANCE", color: "a", desc: "Instagram ve Facebook'ta ROAS odaklı kreatif testler, hedefleme ve bütçe optimizasyonu." },
-  { num: "08", name: "Google ADS", tag: "SEM · DISPLAY", color: "b", desc: "Arama ağı, YouTube, görüntülü reklam ve dönüşüm odaklı performans kampanyaları." },
-  { num: "09", name: "Yandex ADS", tag: "RU · TR", color: "c", desc: "Bölgesel ve uluslararası pazarlar için Yandex arama ve reklam ağı yönetimi." },
-  { num: "10", name: "TikTok ADS", tag: "SHORT-FORM", color: "d", desc: "İlk 3 saniyede yakalayan dikey video kreatifleri ve TikTok performans yönetimi." },
-  { num: "11", name: "Influencer marketing", tag: "CREATOR", color: "e", desc: "Marka tonuna uygun içerik üreticisi seçimi, brief, süreç ve etki raporlaması." },
-  { num: "12", name: "PR çalışmaları", tag: "EARNED MEDIA", color: "f", desc: "Basın bülteni, medya ilişkileri, itibar yönetimi ve lansman iletişimi." },
-];
-
-const items = serviceItems;
-
-interface ServiceItem {
-  num: string;
-  name: string;
-  tag: string;
-  color: string;
-}
+import { serviceItems, type ServiceItem } from "@/content/services";
 
 export default function Services() {
   const [hover, setHover] = useState<ServiceItem | null>(null);
@@ -74,7 +51,7 @@ export default function Services() {
         </div>
 
         <div className="services__list reveal">
-          {items.map((s, i) => (
+          {serviceItems.map((s, i) => (
             <div
               key={i}
               className="service"

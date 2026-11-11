@@ -14,7 +14,6 @@ import Works from "@/components/sections/Works";
 import Manifesto from "@/components/sections/Manifesto";
 import Team from "@/components/sections/Team";
 import Clients from "@/components/sections/Clients";
-import Blog from "@/components/sections/Blog";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
 import ContactModal from "@/components/ContactModal";
@@ -43,7 +42,6 @@ function DesktopHome({
       <Manifesto />
       <Team />
       <Clients onShowAll={onShowAllClients} />
-      <Blog />
       <Contact />
       <Footer />
     </div>
